@@ -7,6 +7,6 @@ import java.util.List;
 public interface EntryRepository {
     List<Entry> foundEntriesByName(String name);
 
-    Entry getEntryById(int id);
+    Entry getEntryById(Integer id);
 }
 

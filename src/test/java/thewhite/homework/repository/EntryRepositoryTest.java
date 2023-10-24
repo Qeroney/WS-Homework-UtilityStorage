@@ -1,26 +1,26 @@
 package thewhite.homework.repository;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
 import thewhite.homework.file.FileLoader;
 import thewhite.homework.file.JsonFileLoader;
 import thewhite.homework.model.Entry;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+
 public class EntryRepositoryTest {
 
-    @Mock
     private FileLoader fileLoader;
-
     private EntryRepository repository;
 
-    @BeforeEach
+    @Before
     public void setUp() {
-        fileLoader = new JsonFileLoader("entryJson/entry.json");
+        fileLoader = Mockito.spy(new JsonFileLoader("src/test/resources/entryTest.json"));
         repository = new EntryRepositoryImpl(fileLoader);
+        Mockito.verify(fileLoader).loadEntriesFromFile();
     }
 
     @Test
@@ -32,8 +32,8 @@ public class EntryRepositoryTest {
         List<Entry> entries = repository.foundEntriesByName(expectedStr);
 
         //Assert
-        Assertions.assertEquals(1, entries.size());
-        Assertions.assertEquals(expectedStr, entries.get(0).getName());
+        assertEquals(1, entries.size());
+        assertEquals(expectedStr, entries.get(0).getName());
     }
 
     @Test
@@ -45,6 +45,6 @@ public class EntryRepositoryTest {
         Entry entry = repository.getEntryById(existingId);
 
         //Assert
-        Assertions.assertEquals(existingId, entry.getId());
+        assertEquals(existingId, entry.getId());
     }
 }

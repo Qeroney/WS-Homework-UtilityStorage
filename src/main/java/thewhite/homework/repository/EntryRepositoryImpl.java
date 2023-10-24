@@ -8,25 +8,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class EntryRepositoryImpl implements EntryRepository {
-
-    private final FileLoader loader;
     private final Map<Integer, Entry> entries;
 
     public EntryRepositoryImpl(FileLoader loader) {
-        this.loader = loader;
         this.entries = loader.loadEntriesFromFile();
     }
 
     @Override
     public List<Entry> foundEntriesByName(String name) {
-        return entries.values().stream()
-                      .filter(entry -> entry.getName().toLowerCase()
-                                            .contains(name.toLowerCase()))
+        return entries.values()
+                      .stream()
+                      .filter(entry -> entry.getName().toLowerCase().contains(name.toLowerCase()))
                       .collect(Collectors.toList());
     }
 
     @Override
-    public Entry getEntryById(int id) {
+    public Entry getEntryById(Integer id) {
         return entries.get(id);
     }
 }

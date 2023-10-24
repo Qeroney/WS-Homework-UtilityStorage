@@ -1,7 +1,7 @@
 package thewhite.homework.service;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,7 +26,7 @@ public class EntryServiceTest {
 
     private EntryService service;
 
-    @BeforeEach
+    @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         service = new EntryServiceImpl(repository);
@@ -35,7 +35,7 @@ public class EntryServiceTest {
     @Test
     public void testFindEntryById() {
         // Arrange
-        int id = 1;
+        Integer id = 1;
         Entry entry = new Entry(id, "Name1", "Description1", "Link1");
         when(repository.getEntryById(id)).thenReturn(entry);
 
@@ -58,7 +58,7 @@ public class EntryServiceTest {
         assertEquals(expectedOutput, outputStream.toString());
 
         // Проверяем что метод был вызван 1 раз
-        verify(repository, Mockito.only()).getEntryById(id);
+        verify(repository).getEntryById(id);
 
         //Возвращаем потоки в исходное состояние, чтобы не влияли на другие тесты
         System.setIn(originalIn);
@@ -95,7 +95,7 @@ public class EntryServiceTest {
                                 System.lineSeparator();
         assertEquals(expectedOutput, outputStream.toString());
 
-        verify(repository, Mockito.only()).foundEntriesByName(name);
+        verify(repository).foundEntriesByName(name);
 
         System.setIn(originalIn);
         System.setOut(originalOut);

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class EntryServiceImpl implements EntryService {
-
     private final EntryRepository repository;
 
     public EntryServiceImpl(EntryRepository repository) {
@@ -25,7 +24,7 @@ public class EntryServiceImpl implements EntryService {
                 System.out.println(entry);
             }
         } else {
-            System.out.println("Not found Entries");
+            System.out.println("Entries not found");
         }
     }
 
@@ -38,7 +37,7 @@ public class EntryServiceImpl implements EntryService {
         if (entry != null) {
             System.out.println(entry);
         } else {
-            System.out.println("Record not found");
+            System.out.println("Entry not found");
         }
     }
 
@@ -48,6 +47,6 @@ public class EntryServiceImpl implements EntryService {
         System.out.println("1 - Display an entry");
         System.out.println("2 - Search entries");
         System.out.println("3 - Exit");
-        return scanner.nextInt();
+        return Integer.parseInt(scanner.nextLine());
     }
 }
