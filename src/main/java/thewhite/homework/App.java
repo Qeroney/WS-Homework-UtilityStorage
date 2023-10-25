@@ -10,7 +10,7 @@ import thewhite.homework.service.EntryServiceImpl;
 
 public class App {
     public static void main(String[] args) {
-        FileLoader fileLoader = new JsonFileLoader("src/main/resources/entry.json");
+        FileLoader fileLoader = new JsonFileLoader(args[0]);
         EntryRepository repository = new EntryRepositoryImpl(fileLoader);
         EntryService service = new EntryServiceImpl(repository);
         AppController controller = new AppController(service);
