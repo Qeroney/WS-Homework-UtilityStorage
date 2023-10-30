@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class EntryServiceTest {
+public class EntryServiceImplTest {
     @Mock
     private EntryRepository repository;
 
@@ -36,7 +36,12 @@ public class EntryServiceTest {
     public void testFindEntryById() {
         // Arrange
         Integer id = 1;
-        Entry entry = new Entry(id, "Name1", "Description1", "Link1");
+        Entry entry = Entry.builder()
+                           .id(id)
+                           .name("Name1")
+                           .description("Description1")
+                           .link("Link1")
+                           .build();
         when(repository.getEntryById(id)).thenReturn(entry);
 
         // Перехватываем вывод, который генерится в методе
@@ -70,8 +75,18 @@ public class EntryServiceTest {
         //Arrange
         String name = "Name1";
         List<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(1, "Name1", "Description1", "Link1"));
-        entries.add(new Entry(2, "Name2", "Description2", "Link2"));
+        entries.add(Entry.builder()
+                         .id(1)
+                         .name(name)
+                         .description("Description1")
+                         .link("Link1")
+                         .build());
+        entries.add(Entry.builder()
+                         .id(2)
+                         .name("Name2")
+                         .description("Description2")
+                         .link("Link2")
+                         .build());
         Mockito.when(repository.foundEntriesByName(name)).thenReturn(entries);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

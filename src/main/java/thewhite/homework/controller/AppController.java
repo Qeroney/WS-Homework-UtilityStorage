@@ -1,13 +1,14 @@
 package thewhite.homework.controller;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import thewhite.homework.service.EntryService;
 
+@Component
+@RequiredArgsConstructor
 public class AppController {
-    private final EntryService service;
 
-    public AppController(EntryService service) {
-        this.service = service;
-    }
+    private final EntryService service;
 
     public void run() {
         boolean isRunning = true;

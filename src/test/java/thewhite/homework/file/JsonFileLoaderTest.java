@@ -12,7 +12,8 @@ public class JsonFileLoaderTest {
     @Test
     public void JsonReaderTest() {
         //Arrange
-        JsonFileLoader jsonFileLoader = new JsonFileLoader("src/test/resources/entryTest.json");
+        JsonFileLoader jsonFileLoader = new JsonFileLoader();
+        jsonFileLoader.setFilePath("src/main/resources/entry.json");
 
         //Act
         Map<Integer, Entry> entries = jsonFileLoader.loadEntriesFromFile();

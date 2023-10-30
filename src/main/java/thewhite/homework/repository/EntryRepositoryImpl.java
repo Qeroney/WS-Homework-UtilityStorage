@@ -1,21 +1,24 @@
 package thewhite.homework.repository;
 
-import thewhite.homework.file.FileLoader;
+import lombok.NonNull;
+import org.springframework.stereotype.Repository;
 import thewhite.homework.model.Entry;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Repository
 public class EntryRepositoryImpl implements EntryRepository {
-    private final Map<Integer, Entry> entries;
+    private final Map<Integer, Entry> entries = new HashMap<>();
 
-    public EntryRepositoryImpl(FileLoader loader) {
-        this.entries = loader.loadEntriesFromFile();
+    public void init(@NonNull Map<Integer, Entry> loadedEntries) {
+        entries.putAll(loadedEntries);
     }
 
     @Override
-    public List<Entry> foundEntriesByName(String name) {
+    public List<Entry> foundEntriesByName(@NonNull String name) {
         return entries.values()
                       .stream()
                       .filter(entry -> entry.getName().toLowerCase().contains(name.toLowerCase()))
@@ -23,7 +26,7 @@ public class EntryRepositoryImpl implements EntryRepository {
     }
 
     @Override
-    public Entry getEntryById(Integer id) {
+    public Entry getEntryById(@NonNull Integer id) {
         return entries.get(id);
     }
 }
