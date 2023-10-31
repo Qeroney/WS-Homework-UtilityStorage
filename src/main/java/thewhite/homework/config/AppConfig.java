@@ -1,6 +1,8 @@
 package thewhite.homework.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import thewhite.homework.controller.AppController;
@@ -8,17 +10,15 @@ import thewhite.homework.file.FileLoader;
 import thewhite.homework.repository.EntryRepository;
 
 @Configuration
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public class AppConfig implements CommandLineRunner {
-    private final AppController appController;
-    private final FileLoader fileLoader;
-    private final EntryRepository entryRepository;
 
-    @Autowired
-    public AppConfig(AppController appController, FileLoader fileLoader, EntryRepository entryRepository) {
-        this.appController = appController;
-        this.fileLoader = fileLoader;
-        this.entryRepository = entryRepository;
-    }
+    AppController appController;
+
+    FileLoader fileLoader;
+
+    EntryRepository entryRepository;
 
     @Override
     public void run(String... args) {

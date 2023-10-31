@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class EntryServiceImplTest {
+public class EntryServiceTest {
     @Mock
     private EntryRepository repository;
 

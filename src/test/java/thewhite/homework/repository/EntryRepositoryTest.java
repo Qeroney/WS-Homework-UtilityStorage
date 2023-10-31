@@ -4,37 +4,30 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-import thewhite.homework.file.FileLoader;
+import thewhite.homework.file.JsonFileLoader;
 import thewhite.homework.model.Entry;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
-public class EntryRepositoryImplTest {
-
-    @MockBean
-    private FileLoader fileLoader;
+public class EntryRepositoryTest {
 
     private EntryRepository repository;
 
+    private JsonFileLoader jsonFileLoader;
+
     @Before
     public void setUp() {
-        Map<Integer, Entry> mockEntries = new HashMap<>();
-        mockEntries.put(1, Entry.builder()
-                                .id(1)
-                                .name("Name1")
-                                .description("Description1")
-                                .link("Link1")
-                                .build());
-        Mockito.when(fileLoader.loadEntriesFromFile()).thenReturn(mockEntries);
+        jsonFileLoader = Mockito.spy(jsonFileLoader = new JsonFileLoader());
+        jsonFileLoader.setFilePath("src/test/resources/entryTest.json");
+        Map<Integer, Entry> entries = jsonFileLoader.loadEntriesFromFile();
+        Mockito.verify(jsonFileLoader).loadEntriesFromFile();
         repository = new EntryRepositoryImpl();
-        repository.init(mockEntries);
+        repository.init(entries);
     }
 
     @Test
