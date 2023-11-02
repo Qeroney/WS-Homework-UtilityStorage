@@ -27,13 +27,13 @@ public class EntryServiceTest {
     private EntryService service;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
         service = new EntryServiceImpl(repository);
     }
 
     @Test
-    public void testFindEntryById() {
+    void testFindEntryById() {
         // Arrange
         Integer id = 1;
         Entry entry = Entry.builder()
@@ -71,7 +71,7 @@ public class EntryServiceTest {
     }
 
     @Test
-    public void testFindEntriesByName() {
+    void testFindEntriesByName() {
         //Arrange
         String name = "Name1";
         List<Entry> entries = new ArrayList<>();

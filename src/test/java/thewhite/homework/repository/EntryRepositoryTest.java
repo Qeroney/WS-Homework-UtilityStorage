@@ -2,7 +2,6 @@ package thewhite.homework.repository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import thewhite.homework.file.FileLoader;
 import thewhite.homework.file.JsonFileLoader;
 import thewhite.homework.model.Entry;
@@ -19,7 +18,7 @@ public class EntryRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        jsonFileLoader = Mockito.spy(new JsonFileLoader("src/test/resources/entryTest.json"));
+        jsonFileLoader = new JsonFileLoader("src/test/resources/entryTest.json");
         repository = new EntryRepositoryImpl();
         repository.init(jsonFileLoader.loadEntriesFromFile());
     }
