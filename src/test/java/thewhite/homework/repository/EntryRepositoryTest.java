@@ -1,30 +1,30 @@
 package thewhite.homework.repository;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import thewhite.homework.file.FileLoader;
 import thewhite.homework.file.JsonFileLoader;
 import thewhite.homework.model.Entry;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EntryRepositoryTest {
+class EntryRepositoryTest {
 
-    private FileLoader fileLoader;
     private EntryRepository repository;
 
-    @Before
-    public void setUp() {
-        fileLoader = Mockito.spy(new JsonFileLoader("src/test/resources/entryTest.json"));
-        repository = new EntryRepositoryImpl(fileLoader);
-        Mockito.verify(fileLoader).loadEntriesFromFile();
+    private FileLoader jsonFileLoader;
+
+    @BeforeEach
+    void setUp() {
+        jsonFileLoader = new JsonFileLoader("src/test/resources/entryTest.json");
+        repository = new EntryRepositoryImpl();
+        repository.init(jsonFileLoader.loadEntriesFromFile());
     }
 
     @Test
-    public void foundEntriesTest() {
+    void foundEntriesTest() {
         //Arrange
         String expectedStr = "Name1";
 
@@ -37,7 +37,7 @@ public class EntryRepositoryTest {
     }
 
     @Test
-    public void getEntriesTest() {
+    void getEntriesTest() {
         //Arrange
         int existingId = 1;
 

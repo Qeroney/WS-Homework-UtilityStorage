@@ -1,15 +1,18 @@
 package thewhite.homework.controller;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 import thewhite.homework.service.EntryService;
 
-public class AppController {
+@Component
+@RequiredArgsConstructor
+public class AppController implements CommandLineRunner {
+
     private final EntryService service;
 
-    public AppController(EntryService service) {
-        this.service = service;
-    }
-
-    public void run() {
+    @Override
+    public void run(String... args) {
         boolean isRunning = true;
 
         while (isRunning) {

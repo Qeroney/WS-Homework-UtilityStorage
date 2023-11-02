@@ -1,17 +1,17 @@
 package thewhite.homework.service;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import thewhite.homework.model.Entry;
 import thewhite.homework.repository.EntryRepository;
 
 import java.util.List;
 import java.util.Scanner;
-
+@Service
+@RequiredArgsConstructor
 public class EntryServiceImpl implements EntryService {
-    private final EntryRepository repository;
 
-    public EntryServiceImpl(EntryRepository repository) {
-        this.repository = repository;
-    }
+    private final EntryRepository repository;
 
     @Override
     public void findEntriesByName() {

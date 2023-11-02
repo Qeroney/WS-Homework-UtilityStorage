@@ -1,7 +1,7 @@
 package thewhite.homework.service;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -16,27 +16,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class EntryServiceTest {
+class EntryServiceTest {
     @Mock
     private EntryRepository repository;
 
     private EntryService service;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         MockitoAnnotations.initMocks(this);
         service = new EntryServiceImpl(repository);
     }
 
     @Test
-    public void testFindEntryById() {
+    void testFindEntryById() {
         // Arrange
         Integer id = 1;
-        Entry entry = new Entry(id, "Name1", "Description1", "Link1");
+        Entry entry = Entry.builder()
+                           .id(id)
+                           .name("Name1")
+                           .description("Description1")
+                           .link("Link1")
+                           .build();
         when(repository.getEntryById(id)).thenReturn(entry);
 
         // Перехватываем вывод, который генерится в методе
@@ -66,12 +71,22 @@ public class EntryServiceTest {
     }
 
     @Test
-    public void testFindEntriesByName() {
+    void testFindEntriesByName() {
         //Arrange
         String name = "Name1";
         List<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(1, "Name1", "Description1", "Link1"));
-        entries.add(new Entry(2, "Name2", "Description2", "Link2"));
+        entries.add(Entry.builder()
+                         .id(1)
+                         .name(name)
+                         .description("Description1")
+                         .link("Link1")
+                         .build());
+        entries.add(Entry.builder()
+                         .id(2)
+                         .name("Name2")
+                         .description("Description2")
+                         .link("Link2")
+                         .build());
         Mockito.when(repository.foundEntriesByName(name)).thenReturn(entries);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
