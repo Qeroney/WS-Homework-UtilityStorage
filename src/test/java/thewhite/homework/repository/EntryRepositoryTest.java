@@ -1,33 +1,27 @@
 package thewhite.homework.repository;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.test.context.junit4.SpringRunner;
+import thewhite.homework.file.FileLoader;
 import thewhite.homework.file.JsonFileLoader;
 import thewhite.homework.model.Entry;
 
 import java.util.List;
-import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
 public class EntryRepositoryTest {
 
     private EntryRepository repository;
 
-    private JsonFileLoader jsonFileLoader;
+    private FileLoader jsonFileLoader;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        jsonFileLoader = Mockito.spy(jsonFileLoader = new JsonFileLoader());
-        jsonFileLoader.setFilePath("src/test/resources/entryTest.json");
-        Map<Integer, Entry> entries = jsonFileLoader.loadEntriesFromFile();
-        Mockito.verify(jsonFileLoader).loadEntriesFromFile();
+        jsonFileLoader = Mockito.spy(new JsonFileLoader("src/test/resources/entryTest.json"));
         repository = new EntryRepositoryImpl();
-        repository.init(entries);
+        repository.init(jsonFileLoader.loadEntriesFromFile());
     }
 
     @Test

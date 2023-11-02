@@ -1,16 +1,25 @@
 package thewhite.homework.controller;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import thewhite.homework.config.AppConfig;
 import thewhite.homework.service.EntryService;
 
 @Component
 @RequiredArgsConstructor
-public class AppController {
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+public class AppController implements CommandLineRunner {
 
-    private final EntryService service;
+    EntryService service;
 
-    public void run() {
+    AppConfig config;
+
+    @Override
+    public void run(String... args) {
+        config.initRepo();
         boolean isRunning = true;
 
         while (isRunning) {
