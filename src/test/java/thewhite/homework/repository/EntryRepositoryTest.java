@@ -10,21 +10,21 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EntryRepositoryTest {
+class EntryRepositoryTest {
 
     private EntryRepository repository;
 
     private FileLoader jsonFileLoader;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         jsonFileLoader = new JsonFileLoader("src/test/resources/entryTest.json");
         repository = new EntryRepositoryImpl();
         repository.init(jsonFileLoader.loadEntriesFromFile());
     }
 
     @Test
-    public void foundEntriesTest() {
+    void foundEntriesTest() {
         //Arrange
         String expectedStr = "Name1";
 
@@ -37,7 +37,7 @@ public class EntryRepositoryTest {
     }
 
     @Test
-    public void getEntriesTest() {
+    void getEntriesTest() {
         //Arrange
         int existingId = 1;
 

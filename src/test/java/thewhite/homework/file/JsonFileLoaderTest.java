@@ -7,11 +7,10 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-public class JsonFileLoaderTest {
+class JsonFileLoaderTest {
 
     @Test
-    public void JsonReaderTest() {
+    void jsonReaderTest() {
         //Arrange
         JsonFileLoader jsonFileLoader = new JsonFileLoader("src/main/resources/entry.json");
 
