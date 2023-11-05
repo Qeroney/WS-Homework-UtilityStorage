@@ -1,6 +1,8 @@
 package thewhite.homework.repository;
 
-import lombok.NonNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import thewhite.homework.model.Entry;
 
@@ -29,11 +31,16 @@ public class EntryRepositoryImpl implements EntryRepository {
     }
 
     @Override
-    public List<Entry> findEntriesByName(String name) {
-        return entries.values()
-                      .stream()
-                      .filter(entry -> entry.getName().toLowerCase().contains(name.toLowerCase()))
-                      .collect(Collectors.toList());
+    public Page<Entry> findEntriesByName(String name, Pageable pageable) {
+        List<Entry> filteredEntries = entries.values()
+                                             .stream()
+                                             .filter(entry -> entry.getName().toLowerCase().contains(name.toLowerCase()))
+                                             .collect(Collectors.toList());
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filteredEntries.size());
+
+        return new PageImpl<>(filteredEntries.subList(start, end), pageable, filteredEntries.size());
     }
 
     @Override

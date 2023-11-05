@@ -3,6 +3,9 @@ package thewhite.homework.repository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import thewhite.homework.model.Entry;
 
 import java.util.ArrayList;
@@ -52,7 +55,6 @@ class EntryRepositoryTest {
     void testFindEntriesByName() {
         //Arrange
         String name = "name";
-        List<Entry> entries = new ArrayList<>();
         Entry entry1 = Entry.builder()
                             .id(1L)
                             .name(name)
@@ -65,16 +67,17 @@ class EntryRepositoryTest {
                             .description("desc2")
                             .link("link2")
                             .build();
-        entries.add(entry1);
-        entries.add(entry2);
         repository.create(entry1);
         repository.create(entry2);
 
+        Pageable pageable = PageRequest.of(0, 10);
+
         //Act
-        List<Entry> actual = repository.findEntriesByName(name);
+        Page<Entry> actual = repository.findEntriesByName(name, pageable);
 
         //Assert
-        Assertions.assertEquals(actual, entries);
+        Assertions.assertTrue(actual.getContent().contains(entry1));
+        Assertions.assertTrue(actual.getContent().contains(entry2));
     }
 
     @Test

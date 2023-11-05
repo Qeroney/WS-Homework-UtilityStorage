@@ -6,6 +6,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import thewhite.homework.controller.dto.CreateEntryDto;
 import thewhite.homework.controller.dto.EntryDto;
@@ -44,10 +47,14 @@ public class EntryController {
 
     @GetMapping("find/{name}")
     @Operation(description = "Получить запись по name")
-    public List<EntryDto> findEntryByName(@PathVariable String name) {
-        List<Entry> entries = entryService.findEntriesByName(name);
+    public Page<EntryDto> findEntryByName(@PathVariable String name,
+                                          @RequestParam(defaultValue = "0") int page,
+                                          @RequestParam(defaultValue = "10") int size) {
+        PageRequest pageable = PageRequest.of(page, size);
+        Page<Entry> entries = entryService.findEntriesByName(name, pageable);
 
-        return ENTRY_MAPPER.toDtoList(entries);
+        List<EntryDto> dtos = ENTRY_MAPPER.toDtoList(entries.getContent());
+        return new PageImpl<>(dtos, pageable, entries.getTotalElements());
     }
 
     @GetMapping("get/{id}")

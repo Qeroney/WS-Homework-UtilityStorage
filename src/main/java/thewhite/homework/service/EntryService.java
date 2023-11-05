@@ -1,15 +1,15 @@
 package thewhite.homework.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import thewhite.homework.model.Entry;
 import thewhite.homework.service.argument.CreateEntryArgument;
 import thewhite.homework.service.argument.UpdateEntryArgument;
 
-import java.util.List;
-
 public interface EntryService {
     Entry create(CreateEntryArgument argument);
 
-    List<Entry> findEntriesByName(String name);
+    Page<Entry> findEntriesByName(String name, Pageable pageable);
 
     void delete(Long id);
 

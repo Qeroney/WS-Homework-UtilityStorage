@@ -4,6 +4,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import thewhite.homework.model.Entry;
 import thewhite.homework.repository.EntryRepository;
 import thewhite.homework.service.argument.CreateEntryArgument;
@@ -56,20 +60,22 @@ class EntryServiceTest {
         String name = "name";
         List<Entry> entries = new ArrayList<>();
         entries.add(new Entry(1L, "name", "desc", "link"));
+        Page<Entry> page = new PageImpl<>(entries);
+        Pageable pageable = PageRequest.of(0, 10);
 
-        Mockito.when(repository.findEntriesByName(name)).thenReturn(entries);
+        Mockito.when(repository.findEntriesByName(name, pageable)).thenReturn(page);
 
         // Act
-        List<Entry> result = entryService.findEntriesByName(name);
+        Page<Entry> result = entryService.findEntriesByName(name, pageable);
 
         // Assert
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(1, result.size());
-        Assertions.assertEquals("name", result.get(0).getName());
-        Assertions.assertEquals("desc", result.get(0).getDescription());
-        Assertions.assertEquals("link", result.get(0).getLink());
+        Assertions.assertEquals(1, result.getTotalElements());
+        Assertions.assertEquals("name", result.getContent().get(0).getName());
+        Assertions.assertEquals("desc", result.getContent().get(0).getDescription());
+        Assertions.assertEquals("link", result.getContent().get(0).getLink());
 
-        Mockito.verify(repository).findEntriesByName(name);
+        Mockito.verify(repository).findEntriesByName(name, pageable);
     }
 
     @Test

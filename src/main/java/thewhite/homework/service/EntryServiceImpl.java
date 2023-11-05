@@ -3,6 +3,8 @@ package thewhite.homework.service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import thewhite.homework.exception.NotFoundException;
 import thewhite.homework.model.Entry;
@@ -10,7 +12,7 @@ import thewhite.homework.repository.EntryRepository;
 import thewhite.homework.service.argument.CreateEntryArgument;
 import thewhite.homework.service.argument.UpdateEntryArgument;
 
-import java.util.List;
+
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -35,8 +37,8 @@ public class EntryServiceImpl implements EntryService {
     }
 
     @Override
-    public List<Entry> findEntriesByName(String name) {
-        return repository.findEntriesByName(name);
+    public Page<Entry> findEntriesByName(String name, Pageable pageable) {
+        return repository.findEntriesByName(name, pageable);
     }
 
     @Override
