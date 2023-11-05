@@ -1,10 +1,19 @@
 package thewhite.homework.service;
 
+import thewhite.homework.model.Entry;
+import thewhite.homework.service.argument.CreateEntryArgument;
+import thewhite.homework.service.argument.UpdateEntryArgument;
+
+import java.util.List;
+
 public interface EntryService {
-    void findEntriesByName();
+    Entry create(CreateEntryArgument argument);
 
-    void printEntryById();
+    List<Entry> findEntriesByName(String name);
 
-    int getUserChoice();
+    void delete(Long id);
 
+    Entry update(Long id, UpdateEntryArgument argument);
+
+    Entry getExisting(Long id);
 }

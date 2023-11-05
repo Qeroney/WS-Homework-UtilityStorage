@@ -1,52 +1,62 @@
 package thewhite.homework.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import thewhite.homework.exception.NotFoundException;
 import thewhite.homework.model.Entry;
 import thewhite.homework.repository.EntryRepository;
+import thewhite.homework.service.argument.CreateEntryArgument;
+import thewhite.homework.service.argument.UpdateEntryArgument;
 
 import java.util.List;
-import java.util.Scanner;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
+
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class EntryServiceImpl implements EntryService {
 
-    private final EntryRepository repository;
+    EntryRepository repository;
+
+    AtomicLong idCounter = new AtomicLong(0);
 
     @Override
-    public void findEntriesByName() {
-        System.out.println("Enter string: ");
-        Scanner scanner = new Scanner(System.in);
-        String name = scanner.nextLine();
-        List<Entry> entries = repository.foundEntriesByName(name);
-        if (!entries.isEmpty()) {
-            for (Entry entry : entries) {
-                System.out.println(entry);
-            }
-        } else {
-            System.out.println("Entries not found");
-        }
+    public Entry create(CreateEntryArgument argument) {
+        Long id = idCounter.incrementAndGet();
+        return repository.create(Entry.builder()
+                                      .id(id)
+                                      .name(argument.getName())
+                                      .description(argument.getDescription())
+                                      .link(argument.getLink())
+                                      .build());
     }
 
     @Override
-    public void printEntryById() {
-        System.out.println("Enter ID:");
-        Scanner scanner = new Scanner(System.in);
-        int id = scanner.nextInt();
-        Entry entry = repository.getEntryById(id);
-        if (entry != null) {
-            System.out.println(entry);
-        } else {
-            System.out.println("Entry not found");
-        }
+    public List<Entry> findEntriesByName(String name) {
+        return repository.findEntriesByName(name);
     }
 
     @Override
-    public int getUserChoice() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("1 - Display an entry");
-        System.out.println("2 - Search entries");
-        System.out.println("3 - Exit");
-        return Integer.parseInt(scanner.nextLine());
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
+
+    @Override
+    public Entry update(Long id, UpdateEntryArgument argument) {
+        return repository.update(id, Entry.builder()
+                                          .id(id)
+                                          .name(argument.getName())
+                                          .description(argument.getDescription())
+                                          .link(argument.getLink())
+                                          .build());
+    }
+
+    @Override
+    public Entry getExisting(Long id) {
+        return Optional.ofNullable(repository.findEntryById(id))
+                       .orElseThrow(() -> new NotFoundException("Запись не найдена"));
     }
 }

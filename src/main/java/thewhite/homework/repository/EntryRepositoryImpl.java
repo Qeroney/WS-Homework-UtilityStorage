@@ -11,14 +11,25 @@ import java.util.stream.Collectors;
 
 @Repository
 public class EntryRepositoryImpl implements EntryRepository {
-    private final Map<Integer, Entry> entries = new HashMap<>();
+    private final Map<Long, Entry> entries = new HashMap<>();
 
-    public void init(@NonNull Map<Integer, Entry> loadedEntries) {
-        entries.putAll(loadedEntries);
+    @Override
+    public Entry create(Entry entry) {
+        entries.put(entry.getId(), entry);
+        return entry;
     }
 
     @Override
-    public List<Entry> foundEntriesByName(@NonNull String name) {
+    public Entry update(Long id, Entry entry) {
+        if (entries.containsKey(id)) {
+            entries.put(id, entry);
+            return entry;
+        }
+        return null;
+    }
+
+    @Override
+    public List<Entry> findEntriesByName(String name) {
         return entries.values()
                       .stream()
                       .filter(entry -> entry.getName().toLowerCase().contains(name.toLowerCase()))
@@ -26,7 +37,12 @@ public class EntryRepositoryImpl implements EntryRepository {
     }
 
     @Override
-    public Entry getEntryById(@NonNull Integer id) {
+    public Entry findEntryById(Long id) {
         return entries.get(id);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        entries.remove(id);
     }
 }

@@ -1,15 +1,17 @@
-package thewhite.homework.model;
+package thewhite.homework.controller.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Getter
-@Setter
-@Builder
+import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Entry {
+@Getter
+@Setter
+@Builder
+public class EntryDto {
 
     Long id;
     String name;

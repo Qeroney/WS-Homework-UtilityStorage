@@ -1,16 +1,18 @@
 package thewhite.homework.repository;
-
 import thewhite.homework.model.Entry;
 
 import java.util.List;
-import java.util.Map;
 
 public interface EntryRepository {
 
-    void init(Map<Integer, Entry> loadedEntries);
+    Entry create(Entry entry);
 
-    List<Entry> foundEntriesByName(String name);
+    Entry update(Long id, Entry entry);
 
-    Entry getEntryById(Integer id);
+    List<Entry> findEntriesByName(String name);
+
+    Entry findEntryById(Long id);
+
+    void deleteById(Long id);
 }
 
