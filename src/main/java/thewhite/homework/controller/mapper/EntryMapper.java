@@ -10,7 +10,7 @@ import thewhite.homework.service.argument.UpdateEntryArgument;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface EntryMapper {
 
     EntryDto toDto(Entry entry);

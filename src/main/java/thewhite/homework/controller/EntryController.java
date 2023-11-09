@@ -28,23 +28,23 @@ public class EntryController {
 
     EntryService entryService;
 
-    EntryMapper ENTRY_MAPPER;
+    EntryMapper entryMapper;
 
     @PostMapping("create")
     @Operation(description = "Создать запись")
     public EntryDto create(@RequestBody CreateEntryDto dto) {
-        Entry create = entryService.create(ENTRY_MAPPER.toCreateArgument(dto));
+        Entry create = entryService.create(entryMapper.toCreateArgument(dto));
 
-        return ENTRY_MAPPER.toDto(create);
+        return entryMapper.toDto(create);
     }
 
     @PutMapping("{id}/update")
     @ApiResponse(description = "Запись не найдена", responseCode = "404")
     @Operation(description = "Обновить запись")
     public EntryDto update(@PathVariable Long id, @RequestBody UpdateEntryDto dto) {
-        Entry update = entryService.update(id, ENTRY_MAPPER.toUpdateArgument(dto));
+        Entry update = entryService.update(id, entryMapper.toUpdateArgument(dto));
 
-        return ENTRY_MAPPER.toDto(update);
+        return entryMapper.toDto(update);
     }
 
     @GetMapping("find/{name}")
@@ -56,7 +56,7 @@ public class EntryController {
         PageRequest pageable = PageRequest.of(page, size);
         Page<Entry> entries = entryService.findEntriesByName(name, pageable);
 
-        List<EntryDto> dtos = ENTRY_MAPPER.toDtoList(entries.getContent());
+        List<EntryDto> dtos = entryMapper.toDtoList(entries.getContent());
         return new PageImpl<>(dtos, pageable, entries.getTotalElements());
     }
 
@@ -66,7 +66,7 @@ public class EntryController {
     public EntryDto get(@PathVariable Long id) {
         Entry existing = entryService.getExisting(id);
 
-        return ENTRY_MAPPER.toDto(existing);
+        return entryMapper.toDto(existing);
     }
 
     @DeleteMapping("{id}/delete")
