@@ -8,9 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import thewhite.homework.model.Entry;
 
-import java.util.ArrayList;
-import java.util.List;
-
 class EntryRepositoryTest {
 
     private EntryRepository repository;
@@ -41,7 +38,12 @@ class EntryRepositoryTest {
     void testUpdate() {
         //Arrange
         Long id = 1L;
-        Entry entry = new Entry(1L, "name", "desc", "link");
+        Entry entry = Entry.builder()
+                           .id(id)
+                           .name("name")
+                           .description("desc")
+                           .link("link")
+                           .build();
         repository.create(entry);
 
         //Act

@@ -38,7 +38,11 @@ class EntryServiceTest {
                            .description("desc")
                            .link("link")
                            .build();
-        CreateEntryArgument argument = new CreateEntryArgument(entry.getName(), entry.getDescription(), entry.getLink());
+        CreateEntryArgument argument = CreateEntryArgument.builder()
+                                                          .name("name")
+                                                          .description("desc")
+                                                          .link("link")
+                                                          .build();
         Mockito.when(repository.create(any())).thenReturn(entry);
 
         // Act
@@ -59,7 +63,12 @@ class EntryServiceTest {
         // Arrange
         String name = "name";
         List<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(1L, "name", "desc", "link"));
+        entries.add(Entry.builder()
+                         .id(1L)
+                         .name("name")
+                         .description("desc")
+                         .link("link")
+                         .build());
         Page<Entry> page = new PageImpl<>(entries);
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -99,8 +108,11 @@ class EntryServiceTest {
                            .description("desc")
                            .link("link")
                            .build();
-        UpdateEntryArgument argument = new UpdateEntryArgument(entry.getName(), entry.getDescription(), entry.getLink());
-
+        UpdateEntryArgument argument = UpdateEntryArgument.builder()
+                                                          .name("name")
+                                                          .description("desc")
+                                                          .link("link")
+                                                          .build();
         Mockito.when(repository.update(any(Long.class), any(Entry.class))).thenReturn(entry);
 
         // Act

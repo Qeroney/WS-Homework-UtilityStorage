@@ -4,13 +4,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@Getter
-@Setter
+@Value
 @Builder
 @Schema(description = "ДТО для обновления записи")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateEntryDto {
     String name;
     String description;

@@ -6,7 +6,6 @@ import lombok.Value;
 
 @Value
 @Builder
-@AllArgsConstructor
 public class CreateEntryArgument {
     String name;
     String description;

@@ -13,12 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import thewhite.homework.controller.dto.CreateEntryDto;
 import thewhite.homework.controller.dto.EntryDto;
 import thewhite.homework.controller.dto.UpdateEntryDto;
+import thewhite.homework.controller.mapper.EntryMapper;
 import thewhite.homework.model.Entry;
 import thewhite.homework.service.EntryService;
 
 import java.util.List;
-
-import static thewhite.homework.controller.mapper.EntryMapper.ENTRY_MAPPER;
 
 @RequiredArgsConstructor
 @RestController
@@ -29,6 +28,8 @@ public class EntryController {
 
     EntryService entryService;
 
+    EntryMapper ENTRY_MAPPER;
+
     @PostMapping("create")
     @Operation(description = "Создать запись")
     public EntryDto create(@RequestBody CreateEntryDto dto) {
@@ -37,7 +38,8 @@ public class EntryController {
         return ENTRY_MAPPER.toDto(create);
     }
 
-    @PutMapping("update/{id}")
+    @PutMapping("{id}/update")
+    @ApiResponse(description = "Запись не найдена", responseCode = "404")
     @Operation(description = "Обновить запись")
     public EntryDto update(@PathVariable Long id, @RequestBody UpdateEntryDto dto) {
         Entry update = entryService.update(id, ENTRY_MAPPER.toUpdateArgument(dto));
@@ -46,6 +48,7 @@ public class EntryController {
     }
 
     @GetMapping("find/{name}")
+    @ApiResponse(description = "Запись не найдена", responseCode = "404")
     @Operation(description = "Получить запись по name")
     public Page<EntryDto> findEntryByName(@PathVariable String name,
                                           @RequestParam(defaultValue = "0") int page,
@@ -57,7 +60,7 @@ public class EntryController {
         return new PageImpl<>(dtos, pageable, entries.getTotalElements());
     }
 
-    @GetMapping("get/{id}")
+    @GetMapping("{id}/get")
     @Operation(description = "Получить запись по id")
     @ApiResponse(description = "Запись не найдена", responseCode = "404")
     public EntryDto get(@PathVariable Long id) {
@@ -66,7 +69,8 @@ public class EntryController {
         return ENTRY_MAPPER.toDto(existing);
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("{id}/delete")
+    @ApiResponse(description = "Запись не найдена", responseCode = "404")
     @Operation(description = "Удалить запись по id")
     public void delete(@PathVariable Long id) {
         entryService.delete(id);

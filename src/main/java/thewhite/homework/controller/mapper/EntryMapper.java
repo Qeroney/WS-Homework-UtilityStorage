@@ -1,7 +1,6 @@
 package thewhite.homework.controller.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 import thewhite.homework.controller.dto.CreateEntryDto;
 import thewhite.homework.controller.dto.EntryDto;
 import thewhite.homework.controller.dto.UpdateEntryDto;
@@ -11,10 +10,8 @@ import thewhite.homework.service.argument.UpdateEntryArgument;
 
 import java.util.List;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface EntryMapper {
-
-    EntryMapper ENTRY_MAPPER = Mappers.getMapper(EntryMapper.class);
 
     EntryDto toDto(Entry entry);
 
