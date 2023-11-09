@@ -1,10 +1,10 @@
-package thewhite.homework.model;
+package thewhite.homework.controller.dto;
 
 import lombok.*;
 
 @Value
 @Builder
-public class Entry {
+public class EntryDto {
 
     Long id;
     String name;

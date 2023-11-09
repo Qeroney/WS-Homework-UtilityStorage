@@ -1,118 +1,158 @@
 package thewhite.homework.service;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import thewhite.homework.repository.EntryRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import thewhite.homework.model.Entry;
+import thewhite.homework.repository.EntryRepository;
+import thewhite.homework.service.argument.CreateEntryArgument;
+import thewhite.homework.service.argument.UpdateEntryArgument;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 
 class EntryServiceTest {
-    @Mock
-    private EntryRepository repository;
 
-    private EntryService service;
+    private EntryRepository repository;
+    private EntryServiceImpl entryService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
-        service = new EntryServiceImpl(repository);
+        repository = Mockito.mock(EntryRepository.class);
+        entryService = new EntryServiceImpl(repository);
     }
 
     @Test
-    void testFindEntryById() {
+    void testCreate() {
         // Arrange
-        Integer id = 1;
         Entry entry = Entry.builder()
-                           .id(id)
-                           .name("Name1")
-                           .description("Description1")
-                           .link("Link1")
+                           .id(1L)
+                           .name("name")
+                           .description("desc")
+                           .link("link")
                            .build();
-        when(repository.getEntryById(id)).thenReturn(entry);
-
-        // Перехватываем вывод, который генерится в методе
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(outputStream);
-        PrintStream originalOut = System.out;
-        System.setOut(printStream);
-
-        // Иммитируем ввод пользователя
-        InputStream inputStream = new ByteArrayInputStream(String.valueOf(id).getBytes());
-        InputStream originalIn = System.in;
-        System.setIn(inputStream);
+        CreateEntryArgument argument = CreateEntryArgument.builder()
+                                                          .name("name")
+                                                          .description("desc")
+                                                          .link("link")
+                                                          .build();
+        Mockito.when(repository.create(any())).thenReturn(entry);
 
         // Act
-        service.printEntryById();
+        Entry result = entryService.create(argument);
 
         // Assert
-        String expectedOutput = "Enter ID:" + System.lineSeparator() + entry + System.lineSeparator();
-        assertEquals(expectedOutput, outputStream.toString());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(1L, result.getId());
+        Assertions.assertEquals("name", result.getName());
+        Assertions.assertEquals("desc", result.getDescription());
+        Assertions.assertEquals("link", result.getLink());
 
-        // Проверяем что метод был вызван 1 раз
-        verify(repository).getEntryById(id);
-
-        //Возвращаем потоки в исходное состояние, чтобы не влияли на другие тесты
-        System.setIn(originalIn);
-        System.setOut(originalOut);
+        Mockito.verify(repository).create(any(Entry.class));
     }
 
     @Test
-    void testFindEntriesByName() {
-        //Arrange
-        String name = "Name1";
+    void testFoundEntries() {
+        // Arrange
+        String name = "name";
         List<Entry> entries = new ArrayList<>();
         entries.add(Entry.builder()
-                         .id(1)
-                         .name(name)
-                         .description("Description1")
-                         .link("Link1")
+                         .id(1L)
+                         .name("name")
+                         .description("desc")
+                         .link("link")
                          .build());
-        entries.add(Entry.builder()
-                         .id(2)
-                         .name("Name2")
-                         .description("Description2")
-                         .link("Link2")
-                         .build());
-        Mockito.when(repository.foundEntriesByName(name)).thenReturn(entries);
+        Page<Entry> page = new PageImpl<>(entries);
+        Pageable pageable = PageRequest.of(0, 10);
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(outputStream);
-        PrintStream originalOut = System.out;
-        System.setOut(printStream);
+        Mockito.when(repository.findEntriesByName(name, pageable)).thenReturn(page);
 
-        InputStream inputStream = new ByteArrayInputStream(name.getBytes());
-        InputStream originalIn = System.in;
-        System.setIn(inputStream);
+        // Act
+        Page<Entry> result = entryService.findEntriesByName(name, pageable);
 
-        //Act
-        service.findEntriesByName();
+        // Assert
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(1, result.getTotalElements());
+        Assertions.assertEquals("name", result.getContent().get(0).getName());
+        Assertions.assertEquals("desc", result.getContent().get(0).getDescription());
+        Assertions.assertEquals("link", result.getContent().get(0).getLink());
 
-        //Assert
-        // Создаем поток , map преобразование каждой Entry в String , потом собираю и использую Collectors.joining() для объеденения строк в одну + разделитель строк
-        String expectedOutput = "Enter string: " + System.lineSeparator() +
-                                entries.stream()
-                                       .map(Entry::toString)
-                                       .collect(Collectors.joining(System.lineSeparator())) +
-                                System.lineSeparator();
-        assertEquals(expectedOutput, outputStream.toString());
+        Mockito.verify(repository).findEntriesByName(name, pageable);
+    }
 
-        verify(repository).foundEntriesByName(name);
+    @Test
+    void testDelete() {
+        // Arrange
+        Long id = 1L;
 
-        System.setIn(originalIn);
-        System.setOut(originalOut);
+        // Act
+        entryService.delete(id);
+
+        // Assert
+        Mockito.verify(repository).deleteById(id);
+    }
+
+    @Test
+    void testUpdate() {
+        // Arrange
+        Entry entry = Entry.builder()
+                           .id(1L)
+                           .name("name")
+                           .description("desc")
+                           .link("link")
+                           .build();
+        UpdateEntryArgument argument = UpdateEntryArgument.builder()
+                                                          .name("name")
+                                                          .description("desc")
+                                                          .link("link")
+                                                          .build();
+        Mockito.when(repository.update(any(Long.class), any(Entry.class))).thenReturn(entry);
+
+        // Act
+        Entry result = entryService.update(entry.getId(), argument);
+
+        // Assert
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(1L, result.getId());
+        Assertions.assertEquals("name", result.getName());
+        Assertions.assertEquals("desc", result.getDescription());
+        Assertions.assertEquals("link", result.getLink());
+
+        Mockito.verify(repository).update(any(Long.class), any(Entry.class));
+    }
+
+    @Test
+    void testGetExisting() {
+        // Arrange
+        Long id = 1L;
+        Entry entry = Entry.builder()
+                           .id(id)
+                           .name("name")
+                           .description("desc")
+                           .link("link")
+                           .build();
+
+        Mockito.when(repository.findEntryById(id)).thenReturn(entry);
+
+        // Act
+        Entry result = entryService.getExisting(id);
+
+        // Assert
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(1L, result.getId());
+        Assertions.assertEquals("name", result.getName());
+        Assertions.assertEquals("desc", result.getDescription());
+        Assertions.assertEquals("link", result.getLink());
+
+        Mockito.verify(repository).findEntryById(id);
     }
 }
+
+

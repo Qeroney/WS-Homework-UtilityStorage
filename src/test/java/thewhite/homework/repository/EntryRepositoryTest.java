@@ -1,50 +1,123 @@
 package thewhite.homework.repository;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import thewhite.homework.file.FileLoader;
-import thewhite.homework.file.JsonFileLoader;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import thewhite.homework.model.Entry;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EntryRepositoryTest {
 
     private EntryRepository repository;
 
-    private FileLoader jsonFileLoader;
-
     @BeforeEach
-    void setUp() {
-        jsonFileLoader = new JsonFileLoader("src/test/resources/entryTest.json");
+    void setup() {
         repository = new EntryRepositoryImpl();
-        repository.init(jsonFileLoader.loadEntriesFromFile());
     }
 
     @Test
-    void foundEntriesTest() {
+    void testCreate() {
         //Arrange
-        String expectedStr = "Name1";
+        Entry entry = Entry.builder()
+                           .id(1L)
+                           .name("name")
+                           .description("desc")
+                           .link("link")
+                           .build();
 
         //Act
-        List<Entry> entries = repository.foundEntriesByName(expectedStr);
+        Entry actual = repository.create(entry);
 
         //Assert
-        assertEquals(1, entries.size());
-        assertEquals(expectedStr, entries.get(0).getName());
+        Assertions.assertEquals(actual, entry);
     }
 
     @Test
-    void getEntriesTest() {
+    void testUpdate() {
         //Arrange
-        int existingId = 1;
+        Long id = 1L;
+        Entry entry = Entry.builder()
+                           .id(id)
+                           .name("name")
+                           .description("desc")
+                           .link("link")
+                           .build();
+        repository.create(entry);
 
         //Act
-        Entry entry = repository.getEntryById(existingId);
+        Entry actual = repository.update(id, entry);
 
         //Assert
-        assertEquals(existingId, entry.getId());
+        Assertions.assertEquals(actual, entry);
+    }
+
+    @Test
+    void testFindEntriesByName() {
+        //Arrange
+        String name = "name";
+        Entry entry1 = Entry.builder()
+                            .id(1L)
+                            .name(name)
+                            .description("desc1")
+                            .link("link1")
+                            .build();
+        Entry entry2 = Entry.builder()
+                            .id(2L)
+                            .name(name)
+                            .description("desc2")
+                            .link("link2")
+                            .build();
+        repository.create(entry1);
+        repository.create(entry2);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        //Act
+        Page<Entry> actual = repository.findEntriesByName(name, pageable);
+
+        //Assert
+        Assertions.assertTrue(actual.getContent().contains(entry1));
+        Assertions.assertTrue(actual.getContent().contains(entry2));
+    }
+
+    @Test
+    void testFindEntryById() {
+        //Arrange
+        Long id = 1L;
+        Entry entry = Entry.builder()
+                           .id(id)
+                           .name("name")
+                           .description("desc")
+                           .link("link")
+                           .build();
+        repository.create(entry);
+
+        //Act
+        Entry actual = repository.findEntryById(id);
+
+        //Assert
+        Assertions.assertEquals(actual, entry);
+    }
+
+    @Test
+    void testDelete() {
+        //Arrange
+        Long id = 1L;
+        Entry entry = Entry.builder()
+                           .id(id)
+                           .name("name")
+                           .description("desc")
+                           .link("link")
+                           .build();
+        repository.create(entry);
+
+        //Act
+        repository.deleteById(id);
+
+        //Assert
+        Entry actual = repository.findEntryById(id);
+        Assertions.assertNull(actual);
     }
 }
