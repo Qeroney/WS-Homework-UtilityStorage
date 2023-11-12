@@ -1,4 +1,4 @@
-package thewhite.homework.controller;
+package thewhite.homework.api.entry;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -12,11 +12,11 @@ import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebCl
 import org.springframework.boot.test.context.SpringBootTest;;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import thewhite.homework.controller.dto.CreateEntryDto;
-import thewhite.homework.controller.dto.EntryDto;
-import thewhite.homework.controller.dto.UpdateEntryDto;
+import thewhite.homework.api.entry.dto.CreateEntryDto;
+import thewhite.homework.api.entry.dto.EntryDto;
+import thewhite.homework.api.entry.dto.UpdateEntryDto;
 import thewhite.homework.model.Entry;
-import thewhite.homework.repository.EntryRepository;
+import thewhite.homework.repository.entry.EntryRepository;
 
 import java.util.HashMap;
 import java.util.Map;

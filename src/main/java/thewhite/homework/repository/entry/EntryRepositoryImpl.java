@@ -1,4 +1,4 @@
-package thewhite.homework.repository;
+package thewhite.homework.repository.entry;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,7 +16,7 @@ public class EntryRepositoryImpl implements EntryRepository {
     private final Map<Long, Entry> entries = new HashMap<>();
 
     @Override
-    public Entry create(Entry entry) {
+    public Entry save(Entry entry) {
         entries.put(entry.getId(), entry);
         return entry;
     }
@@ -31,7 +31,7 @@ public class EntryRepositoryImpl implements EntryRepository {
     }
 
     @Override
-    public Page<Entry> findEntriesByName(String name, Pageable pageable) {
+    public Page<Entry> findByName(String name, Pageable pageable) {
         List<Entry> filteredEntries = entries.values()
                                              .stream()
                                              .filter(entry -> entry.getName().toLowerCase().contains(name.toLowerCase()))
@@ -44,7 +44,7 @@ public class EntryRepositoryImpl implements EntryRepository {
     }
 
     @Override
-    public Entry findEntryById(Long id) {
+    public Entry findById(Long id) {
         return entries.get(id);
     }
 

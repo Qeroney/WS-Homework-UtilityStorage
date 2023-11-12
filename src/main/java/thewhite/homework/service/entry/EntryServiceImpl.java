@@ -1,4 +1,4 @@
-package thewhite.homework.service;
+package thewhite.homework.service.entry;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -8,9 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import thewhite.homework.exception.NotFoundException;
 import thewhite.homework.model.Entry;
-import thewhite.homework.repository.EntryRepository;
-import thewhite.homework.service.argument.CreateEntryArgument;
-import thewhite.homework.service.argument.UpdateEntryArgument;
+import thewhite.homework.repository.entry.EntryRepository;
+import thewhite.homework.service.entry.argument.CreateEntryArgument;
+import thewhite.homework.service.entry.argument.UpdateEntryArgument;
 
 
 import java.util.Optional;
@@ -28,17 +28,17 @@ public class EntryServiceImpl implements EntryService {
     @Override
     public Entry create(CreateEntryArgument argument) {
         Long id = idCounter.incrementAndGet();
-        return repository.create(Entry.builder()
-                                      .id(id)
-                                      .name(argument.getName())
-                                      .description(argument.getDescription())
-                                      .link(argument.getLink())
-                                      .build());
+        return repository.save(Entry.builder()
+                                    .id(id)
+                                    .name(argument.getName())
+                                    .description(argument.getDescription())
+                                    .link(argument.getLink())
+                                    .build());
     }
 
     @Override
     public Page<Entry> findEntriesByName(String name, Pageable pageable) {
-        return repository.findEntriesByName(name, pageable);
+        return repository.findByName(name, pageable);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class EntryServiceImpl implements EntryService {
 
     @Override
     public Entry getExisting(Long id) {
-        return Optional.ofNullable(repository.findEntryById(id))
+        return Optional.ofNullable(repository.findById(id))
                        .orElseThrow(() -> new NotFoundException("Запись не найдена"));
     }
 }
