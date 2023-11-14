@@ -4,7 +4,8 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Value
+@Getter
+@Setter
 @Builder
 public class Grade {
 

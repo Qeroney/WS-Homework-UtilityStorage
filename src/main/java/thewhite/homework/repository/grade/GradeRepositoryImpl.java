@@ -17,15 +17,17 @@ public class GradeRepositoryImpl implements GradeRepository {
 
     @Override
     public Grade save(Grade grade) {
-        gradeMap.put(grade.getId(), grade);
+        UUID id = UUID.randomUUID();
+        grade.setId(id);
+        gradeMap.put(id, grade);
         return grade;
     }
 
     @Override
     public List<Grade> findAllById(Long entryId) {
         return gradeMap.values().stream()
-                     .filter(grade -> grade.getEntryId().equals(entryId))
-                     .collect(Collectors.toList());
+                       .filter(grade -> grade.getEntryId().equals(entryId))
+                       .collect(Collectors.toList());
     }
 
     @Override

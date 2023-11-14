@@ -1,6 +1,7 @@
 package thewhite.homework.api.grade;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class GradeController {
     GradeMapper gradeMapper;
 
     @GetMapping("{entryId}/getAll")
+    @ApiResponse(description = "Оценка не найдена", responseCode = "404")
     @Operation(description = "Получения списка по идентификатору записи с полезностями")
     public List<GradeDto> findByEntryId(@PathVariable Long entryId) {
         List<Grade> existing = gradeService.getAllExisting(entryId);
@@ -46,6 +48,7 @@ public class GradeController {
     }
 
     @DeleteMapping("{id}/delete")
+    @ApiResponse(description = "Оценка не найдена", responseCode = "404")
     @Operation(description = "Удалить оценку")
     public void delete(@PathVariable UUID id) {
         gradeService.delete(id);

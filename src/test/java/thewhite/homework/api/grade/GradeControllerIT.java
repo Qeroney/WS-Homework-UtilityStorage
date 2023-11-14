@@ -16,6 +16,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import thewhite.homework.api.grade.dto.CreateGradeDto;
 import thewhite.homework.api.grade.dto.GradeDto;
+import thewhite.homework.exception.MessageError;
 import thewhite.homework.model.Entry;
 import thewhite.homework.model.Grade;
 import thewhite.homework.repository.entry.EntryRepository;
@@ -148,14 +149,25 @@ public class GradeControllerIT {
                                            .rating(6)
                                            .build();
 
-        // Act & Assert
-        client.post()
-              .uri("grade/create")
-              .contentType(MediaType.APPLICATION_JSON)
-              .bodyValue(dto)
-              .exchange()
-              .expectStatus()
-              .is5xxServerError();
+        // Act
+        MessageError responseBody = client.post()
+                                          .uri("grade/create")
+                                          .contentType(MediaType.APPLICATION_JSON)
+                                          .bodyValue(dto)
+                                          .exchange()
+                                          .expectStatus()
+                                          .isBadRequest()
+                                          .expectBody(MessageError.class)
+                                          .returnResult()
+                                          .getResponseBody();
+
+        //Assert
+        MessageError error = MessageError.of("execute.argument.rating: оценка не должна быть больше 5");
+
+        Assertions.assertThat(responseBody)
+                  .usingRecursiveComparison()
+                  .withStrictTypeChecking()
+                  .isEqualTo(error);
     }
 
     @Test
@@ -167,14 +179,25 @@ public class GradeControllerIT {
                                            .rating(4)
                                            .build();
 
-        // Act & Assert
-        client.post()
-              .uri("grade/create")
-              .contentType(MediaType.APPLICATION_JSON)
-              .bodyValue(dto)
-              .exchange()
-              .expectStatus()
-              .is5xxServerError();
+        // Act
+        MessageError responseBody = client.post()
+                                          .uri("grade/create")
+                                          .contentType(MediaType.APPLICATION_JSON)
+                                          .bodyValue(dto)
+                                          .exchange()
+                                          .expectStatus()
+                                          .isBadRequest()
+                                          .expectBody(MessageError.class)
+                                          .returnResult()
+                                          .getResponseBody();
+
+        //Assert
+        MessageError error = MessageError.of("execute.argument.comment: не указан комментарий");
+
+        Assertions.assertThat(responseBody)
+                  .usingRecursiveComparison()
+                  .withStrictTypeChecking()
+                  .isEqualTo(error);
     }
 
     @Test
@@ -186,13 +209,24 @@ public class GradeControllerIT {
                                            .rating(5)
                                            .build();
 
-        // Act & Assert
-        client.post()
-              .uri("grade/create")
-              .contentType(MediaType.APPLICATION_JSON)
-              .bodyValue(dto)
-              .exchange()
-              .expectStatus()
-              .is4xxClientError();
+        // Act
+        MessageError responseBody = client.post()
+                                          .uri("grade/create")
+                                          .contentType(MediaType.APPLICATION_JSON)
+                                          .bodyValue(dto)
+                                          .exchange()
+                                          .expectStatus()
+                                          .is4xxClientError()
+                                          .expectBody(MessageError.class)
+                                          .returnResult()
+                                          .getResponseBody();
+
+        //Assert
+        MessageError error = MessageError.of("Запись не найдена");
+
+        Assertions.assertThat(responseBody)
+                  .usingRecursiveComparison()
+                  .withStrictTypeChecking()
+                  .isEqualTo(error);
     }
 }

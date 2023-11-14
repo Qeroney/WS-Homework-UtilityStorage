@@ -1,6 +1,8 @@
 package thewhite.homework.service.grade;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import thewhite.homework.exception.NotFoundException;
 import thewhite.homework.model.Grade;
@@ -13,15 +15,14 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class GradeServiceImpl implements GradeService {
 
-    private final GradeRepository gradeRepository;
+    GradeRepository gradeRepository;
 
     @Override
     public Grade create(CreateGradeArgument argument) {
-        UUID id = UUID.randomUUID();
         return gradeRepository.save(Grade.builder()
-                                         .id(id)
                                          .entryId(argument.getEntryId())
                                          .rating(argument.getRating())
                                          .comment(argument.getComment())

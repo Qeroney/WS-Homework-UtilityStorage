@@ -6,6 +6,7 @@ import lombok.*;
 @Getter
 @AllArgsConstructor(staticName = "of")
 @Schema(description = "Класс ошибки")
+@NoArgsConstructor
 public class MessageError {
-    private final String errorMessage;
+    private String errorMessage;
 }

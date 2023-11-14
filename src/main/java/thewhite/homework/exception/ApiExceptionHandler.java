@@ -1,23 +1,23 @@
 package thewhite.homework.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
-    public @ResponseBody MessageError processNotFoundException(NotFoundException exception) {
+    public MessageError processNotFoundException(NotFoundException exception) {
         return MessageError.of(exception.getMessage());
     }
 
-    @ResponseStatus(INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(RuntimeException.class)
-    public @ResponseBody MessageError processRuntimeException(RuntimeException exception) {
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public MessageError processConstViolationException(ConstraintViolationException exception) {
         return MessageError.of(exception.getMessage());
     }
 }
