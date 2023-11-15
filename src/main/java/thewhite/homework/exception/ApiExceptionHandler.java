@@ -1,8 +1,11 @@
 package thewhite.homework.exception;
 
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -18,6 +21,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
     public MessageError processConstViolationException(ConstraintViolationException exception) {
-        return MessageError.of(exception.getMessage());
+        return MessageError.of(exception.getConstraintViolations().stream()
+                                        .map(ConstraintViolation::getMessage)
+                                        .collect(Collectors.joining(", ")));
     }
 }

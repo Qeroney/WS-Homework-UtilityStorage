@@ -162,7 +162,7 @@ public class GradeControllerIT {
                                           .getResponseBody();
 
         //Assert
-        MessageError error = MessageError.of("execute.argument.rating: оценка не должна быть больше 5");
+        MessageError error = MessageError.of("оценка не должна быть больше 5");
 
         Assertions.assertThat(responseBody)
                   .usingRecursiveComparison()
@@ -192,7 +192,7 @@ public class GradeControllerIT {
                                           .getResponseBody();
 
         //Assert
-        MessageError error = MessageError.of("execute.argument.comment: не указан комментарий");
+        MessageError error = MessageError.of("не указан комментарий");
 
         Assertions.assertThat(responseBody)
                   .usingRecursiveComparison()
