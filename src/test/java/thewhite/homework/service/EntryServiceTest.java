@@ -9,9 +9,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import thewhite.homework.model.Entry;
-import thewhite.homework.repository.EntryRepository;
-import thewhite.homework.service.argument.CreateEntryArgument;
-import thewhite.homework.service.argument.UpdateEntryArgument;
+import thewhite.homework.repository.entry.EntryRepository;
+import thewhite.homework.service.entry.argument.CreateEntryArgument;
+import thewhite.homework.service.entry.argument.UpdateEntryArgument;
+import thewhite.homework.service.entry.EntryServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ class EntryServiceTest {
                                                           .description("desc")
                                                           .link("link")
                                                           .build();
-        Mockito.when(repository.create(any())).thenReturn(entry);
+        Mockito.when(repository.save(any())).thenReturn(entry);
 
         // Act
         Entry result = entryService.create(argument);
@@ -55,7 +56,7 @@ class EntryServiceTest {
         Assertions.assertEquals("desc", result.getDescription());
         Assertions.assertEquals("link", result.getLink());
 
-        Mockito.verify(repository).create(any(Entry.class));
+        Mockito.verify(repository).save(any(Entry.class));
     }
 
     @Test
@@ -72,7 +73,7 @@ class EntryServiceTest {
         Page<Entry> page = new PageImpl<>(entries);
         Pageable pageable = PageRequest.of(0, 10);
 
-        Mockito.when(repository.findEntriesByName(name, pageable)).thenReturn(page);
+        Mockito.when(repository.findByName(name, pageable)).thenReturn(page);
 
         // Act
         Page<Entry> result = entryService.findEntriesByName(name, pageable);
@@ -84,7 +85,7 @@ class EntryServiceTest {
         Assertions.assertEquals("desc", result.getContent().get(0).getDescription());
         Assertions.assertEquals("link", result.getContent().get(0).getLink());
 
-        Mockito.verify(repository).findEntriesByName(name, pageable);
+        Mockito.verify(repository).findByName(name, pageable);
     }
 
     @Test
@@ -139,7 +140,7 @@ class EntryServiceTest {
                            .link("link")
                            .build();
 
-        Mockito.when(repository.findEntryById(id)).thenReturn(entry);
+        Mockito.when(repository.findById(id)).thenReturn(entry);
 
         // Act
         Entry result = entryService.getExisting(id);
@@ -151,7 +152,7 @@ class EntryServiceTest {
         Assertions.assertEquals("desc", result.getDescription());
         Assertions.assertEquals("link", result.getLink());
 
-        Mockito.verify(repository).findEntryById(id);
+        Mockito.verify(repository).findById(id);
     }
 }
 

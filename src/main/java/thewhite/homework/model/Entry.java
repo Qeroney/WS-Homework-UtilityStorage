@@ -2,7 +2,8 @@ package thewhite.homework.model;
 
 import lombok.*;
 
-@Value
+@Setter
+@Getter
 @Builder
 public class Entry {
 

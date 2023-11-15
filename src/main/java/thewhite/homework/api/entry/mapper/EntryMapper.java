@@ -1,12 +1,12 @@
-package thewhite.homework.controller.mapper;
+package thewhite.homework.api.entry.mapper;
 
 import org.mapstruct.Mapper;
-import thewhite.homework.controller.dto.CreateEntryDto;
-import thewhite.homework.controller.dto.EntryDto;
-import thewhite.homework.controller.dto.UpdateEntryDto;
+import thewhite.homework.api.entry.dto.CreateEntryDto;
+import thewhite.homework.api.entry.dto.EntryDto;
+import thewhite.homework.api.entry.dto.UpdateEntryDto;
 import thewhite.homework.model.Entry;
-import thewhite.homework.service.argument.CreateEntryArgument;
-import thewhite.homework.service.argument.UpdateEntryArgument;
+import thewhite.homework.service.entry.argument.CreateEntryArgument;
+import thewhite.homework.service.entry.argument.UpdateEntryArgument;
 
 import java.util.List;
 

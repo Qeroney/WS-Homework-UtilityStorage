@@ -1,4 +1,4 @@
-package thewhite.homework.controller;
+package thewhite.homework.api.entry;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,12 +10,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
-import thewhite.homework.controller.dto.CreateEntryDto;
-import thewhite.homework.controller.dto.EntryDto;
-import thewhite.homework.controller.dto.UpdateEntryDto;
-import thewhite.homework.controller.mapper.EntryMapper;
+import thewhite.homework.api.entry.dto.CreateEntryDto;
+import thewhite.homework.api.entry.dto.EntryDto;
+import thewhite.homework.api.entry.dto.UpdateEntryDto;
+import thewhite.homework.api.entry.mapper.EntryMapper;
 import thewhite.homework.model.Entry;
-import thewhite.homework.service.EntryService;
+import thewhite.homework.service.entry.EntryService;
 
 import java.util.List;
 

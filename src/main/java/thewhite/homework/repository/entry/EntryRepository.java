@@ -1,19 +1,18 @@
-package thewhite.homework.repository;
+package thewhite.homework.repository.entry;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import thewhite.homework.model.Entry;
 
-import java.util.List;
-
 public interface EntryRepository {
 
-    Entry create(Entry entry);
+    Entry save(Entry entry);
 
     Entry update(Long id, Entry entry);
 
-    Page<Entry> findEntriesByName(String name, Pageable pageable);
+    Page<Entry> findByName(String name, Pageable pageable);
 
-    Entry findEntryById(Long id);
+    Entry findById(Long id);
 
     void deleteById(Long id);
 }

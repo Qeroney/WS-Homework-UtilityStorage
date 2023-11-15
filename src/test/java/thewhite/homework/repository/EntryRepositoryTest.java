@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import thewhite.homework.model.Entry;
+import thewhite.homework.repository.entry.EntryRepository;
+import thewhite.homework.repository.entry.EntryRepositoryImpl;
 
 class EntryRepositoryTest {
 
@@ -28,7 +30,7 @@ class EntryRepositoryTest {
                            .build();
 
         //Act
-        Entry actual = repository.create(entry);
+        Entry actual = repository.save(entry);
 
         //Assert
         Assertions.assertEquals(actual, entry);
@@ -44,7 +46,7 @@ class EntryRepositoryTest {
                            .description("desc")
                            .link("link")
                            .build();
-        repository.create(entry);
+        repository.save(entry);
 
         //Act
         Entry actual = repository.update(id, entry);
@@ -69,13 +71,13 @@ class EntryRepositoryTest {
                             .description("desc2")
                             .link("link2")
                             .build();
-        repository.create(entry1);
-        repository.create(entry2);
+        repository.save(entry1);
+        repository.save(entry2);
 
         Pageable pageable = PageRequest.of(0, 10);
 
         //Act
-        Page<Entry> actual = repository.findEntriesByName(name, pageable);
+        Page<Entry> actual = repository.findByName(name, pageable);
 
         //Assert
         Assertions.assertTrue(actual.getContent().contains(entry1));
@@ -92,10 +94,10 @@ class EntryRepositoryTest {
                            .description("desc")
                            .link("link")
                            .build();
-        repository.create(entry);
+        repository.save(entry);
 
         //Act
-        Entry actual = repository.findEntryById(id);
+        Entry actual = repository.findById(id);
 
         //Assert
         Assertions.assertEquals(actual, entry);
@@ -111,13 +113,13 @@ class EntryRepositoryTest {
                            .description("desc")
                            .link("link")
                            .build();
-        repository.create(entry);
+        repository.save(entry);
 
         //Act
         repository.deleteById(id);
 
         //Assert
-        Entry actual = repository.findEntryById(id);
+        Entry actual = repository.findById(id);
         Assertions.assertNull(actual);
     }
 }

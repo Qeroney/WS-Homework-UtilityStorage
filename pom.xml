@@ -25,7 +25,6 @@
         <mockito.core.version>5.3.1</mockito.core.version>
         <lombok.version>1.18.28</lombok.version>
         <mapstruct.processor.version>1.5.5.Final</mapstruct.processor.version>
-        <jakarta.validation.api.version>3.0.2</jakarta.validation.api.version>
         <mockito.junit.jupiter.version>5.3.1</mockito.junit.jupiter.version>
         <spring.web.version>6.0.11</spring.web.version>
         <swagger.version>2.2.0</swagger.version>
@@ -65,9 +64,8 @@
             <version>${lombok.version}</version>
         </dependency>
         <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>${jakarta.validation.api.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>

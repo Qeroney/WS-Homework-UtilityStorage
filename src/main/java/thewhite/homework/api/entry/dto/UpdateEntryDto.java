@@ -1,4 +1,4 @@
-package thewhite.homework.controller.dto;
+package thewhite.homework.api.entry.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
