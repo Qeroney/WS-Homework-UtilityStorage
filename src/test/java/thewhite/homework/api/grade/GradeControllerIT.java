@@ -1,5 +1,8 @@
 package thewhite.homework.api.grade;
 
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.jupiter.tools.spring.test.postgres.annotation.meta.EnablePostgresIntegrationTest;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.assertj.core.api.Assertions;
@@ -19,8 +22,8 @@ import thewhite.homework.api.grade.dto.GradeDto;
 import thewhite.homework.exception.MessageError;
 import thewhite.homework.model.Entry;
 import thewhite.homework.model.Grade;
-import thewhite.homework.repository.entry.EntryRepository;
-import thewhite.homework.repository.grade.GradeRepository;
+import thewhite.homework.repository.EntryRepository;
+import thewhite.homework.repository.GradeRepository;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,41 +32,16 @@ import java.util.UUID;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebClient
-@ExtendWith(SoftAssertionsExtension.class)
+@EnablePostgresIntegrationTest
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GradeControllerIT {
 
     @Autowired
     WebTestClient client;
 
-    @Autowired
-    GradeRepository gradeRepository;
-
-    @Autowired
-    EntryRepository entryRepository;
-
-    @BeforeEach
-    void setUp() {
-        Map<Long, Entry> entries = new HashMap<>();
-        entries.put(1L, Entry.builder()
-                             .id(1L)
-                             .name("name")
-                             .description("desc")
-                             .link("link")
-                             .build());
-        ReflectionTestUtils.setField(entryRepository, "entries", entries);
-        Map<UUID, Grade> gradeMap = new HashMap<>();
-        gradeMap.put(UUID.fromString("1ed5e3ea-2ab6-4dcd-8c64-a9ef8334bbb0"),
-                     Grade.builder()
-                          .id(UUID.fromString("1ed5e3ea-2ab6-4dcd-8c64-a9ef8334bbb1"))
-                          .entryId(1L)
-                          .comment("comment")
-                          .rating(3)
-                          .build());
-        ReflectionTestUtils.setField(gradeRepository, "gradeMap", gradeMap);
-    }
-
     @Test
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/grade/create.json")
+    @ExpectedDataSet(value = "datasets/api/grade/expected_create.json")
     void create() {
         //Arrange
         CreateGradeDto dto = CreateGradeDto.builder()
@@ -99,9 +77,11 @@ public class GradeControllerIT {
     }
 
     @Test
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/grade/delete.json")
+    @ExpectedDataSet(value = "datasets/api/grade/expected_delete.json")
     void delete() {
         //Arrange
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("d1b4e136-647c-4136-88e0-f2a8f19dfb2e");
 
         //Act
         client.delete()
@@ -110,34 +90,6 @@ public class GradeControllerIT {
               //Assert
               .expectStatus()
               .isOk();
-    }
-
-    @Test
-    void findEntryById() {
-        //Arrange
-        long entryId = 1L;
-
-        //Act
-        List<GradeDto> responseBody = client.get()
-                                            .uri("grade/" + entryId + "/getAll")
-                                            .exchange()
-                                            .expectStatus()
-                                            .isOk()
-                                            .expectBodyList(GradeDto.class)
-                                            .returnResult()
-                                            .getResponseBody();
-
-        //Assert
-        List<GradeDto> expectedBody = Lists.newArrayList(GradeDto.builder()
-                                                                 .entryId(entryId)
-                                                                 .rating(3)
-                                                                 .comment("comment")
-                                                                 .build());
-        Assertions.assertThat(responseBody)
-                  .usingRecursiveComparison()
-                  .withStrictTypeChecking()
-                  .ignoringFields("id")
-                  .isEqualTo(expectedBody);
     }
 
     @Test

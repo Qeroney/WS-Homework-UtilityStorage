@@ -7,17 +7,18 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import thewhite.homework.api.entry.dto.CreateEntryDto;
 import thewhite.homework.api.entry.dto.EntryDto;
+import thewhite.homework.api.entry.dto.SearchEntryDto;
 import thewhite.homework.api.entry.dto.UpdateEntryDto;
-import thewhite.homework.api.entry.mapper.EntryMapper;
 import thewhite.homework.model.Entry;
 import thewhite.homework.service.entry.EntryService;
+import thewhite.homework.service.entry.argument.SearchEntryArgument;
 
-import java.util.List;
+import static thewhite.homework.api.entry.mapper.EntryMapper.ENTRY_MAPPER;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,36 +29,33 @@ public class EntryController {
 
     EntryService entryService;
 
-    EntryMapper entryMapper;
-
     @PostMapping("create")
     @Operation(description = "Создать запись")
     public EntryDto create(@RequestBody CreateEntryDto dto) {
-        Entry create = entryService.create(entryMapper.toCreateArgument(dto));
+        Entry create = entryService.create(ENTRY_MAPPER.toCreateArgument(dto));
 
-        return entryMapper.toDto(create);
+        return ENTRY_MAPPER.toDto(create);
     }
 
     @PutMapping("{id}/update")
     @ApiResponse(description = "Запись не найдена", responseCode = "404")
     @Operation(description = "Обновить запись")
     public EntryDto update(@PathVariable Long id, @RequestBody UpdateEntryDto dto) {
-        Entry update = entryService.update(id, entryMapper.toUpdateArgument(dto));
+        Entry update = entryService.update(id, ENTRY_MAPPER.toUpdateArgument(dto));
 
-        return entryMapper.toDto(update);
+        return ENTRY_MAPPER.toDto(update);
     }
 
-    @GetMapping("find/{name}")
-    @ApiResponse(description = "Запись не найдена", responseCode = "404")
-    @Operation(description = "Получить запись по name")
-    public Page<EntryDto> findEntryByName(@PathVariable String name,
-                                          @RequestParam(defaultValue = "0") int page,
-                                          @RequestParam(defaultValue = "10") int size) {
-        PageRequest pageable = PageRequest.of(page, size);
-        Page<Entry> entries = entryService.findEntriesByName(name, pageable);
+    @GetMapping("page")
+    @ApiResponse(description = "Записи не найдены", responseCode = "404")
+    @Operation(description = "Получить page")
+    public Page<EntryDto> getPageEntry(SearchEntryDto dto,
+                                       @PageableDefault(sort = {"name", "description"})
+                                       Pageable pageable) {
 
-        List<EntryDto> dtos = entryMapper.toDtoList(entries.getContent());
-        return new PageImpl<>(dtos, pageable, entries.getTotalElements());
+        SearchEntryArgument argument = ENTRY_MAPPER.toSearchArgument(dto);
+        Page<Entry> page = entryService.getPageEntry(argument, pageable);
+        return page.map(ENTRY_MAPPER::toDto);
     }
 
     @GetMapping("{id}/get")
@@ -66,7 +64,7 @@ public class EntryController {
     public EntryDto get(@PathVariable Long id) {
         Entry existing = entryService.getExisting(id);
 
-        return entryMapper.toDto(existing);
+        return ENTRY_MAPPER.toDto(existing);
     }
 
     @DeleteMapping("{id}/delete")
