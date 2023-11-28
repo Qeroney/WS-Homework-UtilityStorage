@@ -16,6 +16,7 @@ import thewhite.homework.service.grade.argument.CreateGradeArgument;
 import thewhite.homework.service.grade.argument.SearchGradeArgument;
 import thewhite.homework.utils.QPredicates;
 
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Service
@@ -29,18 +30,17 @@ public class GradeServiceImpl implements GradeService {
 
     @Override
     @Transactional
-    public Grade create(CreateGradeArgument argument) {
+    public Grade create(@NotNull CreateGradeArgument argument) {
         return gradeRepository.save(Grade.builder()
                                          .rating(argument.getRating())
                                          .comment(argument.getComment())
                                          .entry(argument.getEntry())
-                                         .entryId(argument.getEntryId())
                                          .build());
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void delete(UUID id) {
+    public void delete(@NotNull UUID id) {
         gradeRepository.deleteById(id);
     }
 
@@ -55,7 +55,7 @@ public class GradeServiceImpl implements GradeService {
     private Predicate buildPredicate(SearchGradeArgument argument, Long entryId) {
         return QPredicates.builder()
                           .add(argument.getRating(), qGrade.rating::eq)
-                          .add(entryId, qGrade.entryId::eq)
+                          .add(entryId, qGrade.entry.id::eq)
                           .buildAnd();
     }
 }

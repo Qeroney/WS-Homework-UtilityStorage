@@ -29,6 +29,6 @@ public class Entry {
     @Column(name = "link")
     List<String> links;
 
-    @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     List<Grade> grades;
 }

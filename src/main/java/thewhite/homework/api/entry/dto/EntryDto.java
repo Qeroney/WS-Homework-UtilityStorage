@@ -1,7 +1,7 @@
 package thewhite.homework.api.entry.dto;
 
 import lombok.*;
-import thewhite.homework.model.Grade;
+import thewhite.homework.api.grade.dto.GradeDto;
 
 import java.util.List;
 
@@ -17,5 +17,5 @@ public class EntryDto {
 
     List<String> links;
 
-    List<Grade> grades;
+    List<GradeDto> grades;
 }

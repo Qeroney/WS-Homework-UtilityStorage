@@ -32,7 +32,7 @@ public class EntryServiceImpl implements EntryService {
 
     @Override
     @Transactional
-    public Entry create(CreateEntryArgument argument) {
+    public Entry create(@NotNull CreateEntryArgument argument) {
         return repository.save(Entry.builder()
                                     .name(argument.getName())
                                     .description(argument.getDescription())

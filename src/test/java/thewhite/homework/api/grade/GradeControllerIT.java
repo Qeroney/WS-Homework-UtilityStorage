@@ -65,7 +65,6 @@ public class GradeControllerIT {
         //Assert
         GradeDto expectedBody = GradeDto.builder()
                                         .comment("com")
-                                        .entryId(1L)
                                         .rating(5)
                                         .build();
 

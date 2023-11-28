@@ -33,7 +33,6 @@ public class CreateGradeAction {
                                                       .rating(argument.getRating())
                                                       .comment(argument.getComment())
                                                       .entry(existing)
-                                                      .entryId(existing.getId())
                                                       .build());
     }
 }

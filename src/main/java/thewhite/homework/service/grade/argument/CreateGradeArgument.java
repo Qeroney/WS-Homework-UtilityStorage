@@ -10,8 +10,6 @@ public class CreateGradeArgument {
 
     Entry entry;
 
-    Long entryId;
-
     String comment;
 
     Integer rating;

@@ -10,8 +10,6 @@ public class GradeDto {
 
     UUID id;
 
-    Long entryId;
-
     String comment;
 
     Integer rating;
