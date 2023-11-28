@@ -11,11 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "entry")
 public class Entry {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "entry_seq")
-    @SequenceGenerator(name = "entry_seq", sequenceName = "entry_id_seq", allocationSize = 1)
-    @Column(name = "entry_id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
     @Column(nullable = false)
@@ -24,9 +23,9 @@ public class Entry {
     @Column(nullable = false)
     String description;
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection
     @CollectionTable(name = "entry_links", joinColumns = @JoinColumn(name = "entry_id"))
-    @Column(name = "link")
+    @Column(name = "links")
     List<String> links;
 
     @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

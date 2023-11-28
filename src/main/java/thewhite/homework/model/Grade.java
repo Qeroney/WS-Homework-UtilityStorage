@@ -12,13 +12,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "grade")
 public class Grade {
     @Id
     @GeneratedValue
     @Column(name = "grade_id")
     UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Entry entry;
 
     @Column(nullable = false)

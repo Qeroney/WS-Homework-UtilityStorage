@@ -6,42 +6,31 @@ import com.jupiter.tools.spring.test.postgres.annotation.meta.EnablePostgresInte
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import thewhite.homework.api.grade.dto.CreateGradeDto;
 import thewhite.homework.api.grade.dto.GradeDto;
+import thewhite.homework.api.grade.dto.SearchGradeDto;
 import thewhite.homework.exception.MessageError;
-import thewhite.homework.model.Entry;
-import thewhite.homework.model.Grade;
-import thewhite.homework.repository.EntryRepository;
-import thewhite.homework.repository.GradeRepository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebClient
 @EnablePostgresIntegrationTest
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class GradeControllerIT {
+class GradeControllerIT {
 
     @Autowired
     WebTestClient client;
 
     @Test
-    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/grade/create.json")
-    @ExpectedDataSet(value = "datasets/api/grade/expected_create.json")
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/grade/create.json")
+    @ExpectedDataSet(value = "datasets/api/files/grade/expected_create.json")
     void create() {
         //Arrange
         CreateGradeDto dto = CreateGradeDto.builder()
@@ -53,7 +42,6 @@ public class GradeControllerIT {
         //Act
         GradeDto responseBody = client.post()
                                       .uri("grade/create")
-                                      .contentType(MediaType.APPLICATION_JSON)
                                       .bodyValue(dto)
                                       .exchange()
                                       .expectStatus()
@@ -76,8 +64,8 @@ public class GradeControllerIT {
     }
 
     @Test
-    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/grade/delete.json")
-    @ExpectedDataSet(value = "datasets/api/grade/expected_delete.json")
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/grade/delete.json")
+    @ExpectedDataSet(value = "datasets/api/files/grade/expected_delete.json")
     void delete() {
         //Arrange
         UUID id = UUID.fromString("d1b4e136-647c-4136-88e0-f2a8f19dfb2e");
@@ -89,6 +77,25 @@ public class GradeControllerIT {
               //Assert
               .expectStatus()
               .isOk();
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/grade/page.json")
+    void getGradePage() {
+        //Arrange
+        long id = 1L;
+        SearchGradeDto dto = SearchGradeDto.builder()
+                                           .rating(5)
+                                           .build();
+
+        //Act
+        client.get()
+              .uri("/grade/"+ id +"/page")
+              .exchange()
+              //Assert
+              .expectStatus().isOk()
+              .expectBody()
+              .jsonPath("$.content[0].rating").isEqualTo(dto.getRating());
     }
 
     @Test

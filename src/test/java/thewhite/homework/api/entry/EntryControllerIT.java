@@ -11,15 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.testcontainers.shaded.com.google.common.collect.Lists;
 import thewhite.homework.api.entry.dto.CreateEntryDto;
 import thewhite.homework.api.entry.dto.EntryDto;
 import thewhite.homework.api.entry.dto.SearchEntryDto;
 import thewhite.homework.api.entry.dto.UpdateEntryDto;
 
 import java.util.ArrayList;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
@@ -31,21 +28,20 @@ class EntryControllerIT {
     WebTestClient client;
 
     @Test
-    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/entry/create.json")
-    @ExpectedDataSet(value = "datasets/api/entry/expected_create.json")
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/entry/create.json")
+    @ExpectedDataSet(value = "datasets/api/files/entry/expected_create.json")
     void create() {
         //Arrange
         CreateEntryDto dto = CreateEntryDto.builder()
                                            .name("name")
                                            .description("desc")
-                                           .links(Lists.newArrayList("http://link1.com", "http://link2.com"))
+                                           .links(new ArrayList<>())
                                            .grades(new ArrayList<>())
                                            .build();
 
         //Act
         EntryDto responseBody = client.post()
                                       .uri("/entry/create")
-                                      .contentType(APPLICATION_JSON)
                                       .bodyValue(dto)
                                       .exchange()
                                       .expectStatus()
@@ -59,7 +55,7 @@ class EntryControllerIT {
                                         .id(1L)
                                         .name("name")
                                         .description("desc")
-                                        .links(Lists.newArrayList("http://link1.com", "http://link2.com"))
+                                        .links(new ArrayList<>())
                                         .grades(new ArrayList<>())
                                         .build();
 
@@ -70,21 +66,21 @@ class EntryControllerIT {
     }
 
     @Test
-    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/entry/update.json")
-    @ExpectedDataSet(value = "datasets/api/entry/expected_update.json")
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/entry/update.json")
+    @ExpectedDataSet(value = "datasets/api/files/entry/expected_update.json")
     void update() {
         //Arrange
         long id = 1L;
         UpdateEntryDto dto = UpdateEntryDto.builder()
-                                           .name("name")
-                                           .description("desc")
-                                           .links(Lists.newArrayList("http://link1.com", "http://link2.com"))
+                                           .name("name2")
+                                           .description("desc2")
+                                           .links(new ArrayList<>())
+                                           .grades(new ArrayList<>())
                                            .build();
 
         //Act
         EntryDto responseBody = client.put()
                                       .uri("entry/" + id + "/update")
-                                      .contentType(APPLICATION_JSON)
                                       .bodyValue(dto)
                                       .exchange()
                                       .expectStatus()
@@ -96,9 +92,10 @@ class EntryControllerIT {
         //Assert
         EntryDto expectedBody = EntryDto.builder()
                                         .id(1L)
-                                        .name("name")
-                                        .description("desc")
-                                        .links(Lists.newArrayList("http://link1.com", "http://link2.com"))
+                                        .name("name2")
+                                        .description("desc2")
+                                        .links(new ArrayList<>())
+                                        .grades(new ArrayList<>())
                                         .build();
 
         Assertions.assertThat(responseBody)
@@ -108,8 +105,8 @@ class EntryControllerIT {
     }
 
     @Test
-    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/entry/delete.json")
-    @ExpectedDataSet(value = "datasets/api/entry/expected_delete.json")
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/entry/delete.json")
+    @ExpectedDataSet(value = "datasets/api/files/entry/expected_delete.json")
     void delete() {
         //Arrange
         long id = 1L;
@@ -124,8 +121,7 @@ class EntryControllerIT {
     }
 
     @Test
-    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/entry/create.json")
-    @ExpectedDataSet(value = "datasets/api/entry/expected_create.json")
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/entry/get.json")
     void get() {
         //Arrange
         long id = 1L;
@@ -145,7 +141,8 @@ class EntryControllerIT {
                                         .id(1L)
                                         .name("name")
                                         .description("desc")
-                                        .links(Lists.newArrayList("http://link1.com", "http://link2.com"))
+                                        .links(new ArrayList<>())
+                                        .grades(new ArrayList<>())
                                         .build();
 
         Assertions.assertThat(responseBody)
@@ -155,6 +152,7 @@ class EntryControllerIT {
     }
 
     @Test
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/entry/page.json")
     void getPageEntry() {
         // Arrange
         SearchEntryDto searchEntryDto = SearchEntryDto.builder()
