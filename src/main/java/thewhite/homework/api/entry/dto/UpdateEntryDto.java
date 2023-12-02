@@ -16,6 +16,4 @@ public class UpdateEntryDto {
     String description;
 
     List<String> links;
-
-    List<GradeDto> grades;
 }

@@ -20,7 +20,7 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
-public class GradeServiceTest {
+class GradeServiceTest {
 
     private final GradeRepository gradeRepository = Mockito.mock(GradeRepository.class);
 
@@ -80,6 +80,7 @@ public class GradeServiceTest {
         //Arrange
         Long id = 1L;
         SearchGradeArgument argument = SearchGradeArgument.builder()
+                                                          .entryId(id)
                                                           .rating(5)
                                                           .build();
 
@@ -88,7 +89,7 @@ public class GradeServiceTest {
         Mockito.when(gradeRepository.findAll(any(Predicate.class), eq(pageable))).thenReturn(expectedPage);
 
         //Act
-        Page<Grade> result = gradeService.getPageGrade(argument, id, pageable);
+        Page<Grade> result = gradeService.getPageGrade(argument, pageable);
 
         //Assert
         ArgumentCaptor<Predicate> predicateArgumentCaptor = ArgumentCaptor.forClass(Predicate.class);
@@ -100,6 +101,5 @@ public class GradeServiceTest {
                   .isEqualTo(expectedPage);
         Assertions.assertThat(predicateArgumentCaptor.getValue().toString())
                   .isEqualTo("grade.rating = 5 && grade.entry.id = 1");
-
     }
 }

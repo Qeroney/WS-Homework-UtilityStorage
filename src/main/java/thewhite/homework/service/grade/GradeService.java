@@ -14,5 +14,5 @@ public interface GradeService {
 
     void delete(UUID id);
 
-    Page<Grade> getPageGrade(SearchGradeArgument argument, Long entryId, Pageable pageable);
+    Page<Grade> getPageGrade(SearchGradeArgument argument, Pageable pageable);
 }

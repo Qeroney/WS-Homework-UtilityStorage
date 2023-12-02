@@ -6,17 +6,16 @@ import com.jupiter.tools.spring.test.postgres.annotation.meta.EnablePostgresInte
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.assertj.core.api.Assertions;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import thewhite.homework.api.entry.dto.CreateEntryDto;
-import thewhite.homework.api.entry.dto.EntryDto;
-import thewhite.homework.api.entry.dto.SearchEntryDto;
-import thewhite.homework.api.entry.dto.UpdateEntryDto;
+import thewhite.homework.api.entry.dto.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
@@ -35,8 +34,7 @@ class EntryControllerIT {
         CreateEntryDto dto = CreateEntryDto.builder()
                                            .name("name")
                                            .description("desc")
-                                           .links(new ArrayList<>())
-                                           .grades(new ArrayList<>())
+                                           .links(List.of("link1", "link2"))
                                            .build();
 
         //Act
@@ -55,7 +53,7 @@ class EntryControllerIT {
                                         .id(1L)
                                         .name("name")
                                         .description("desc")
-                                        .links(new ArrayList<>())
+                                        .links(List.of("link1", "link2"))
                                         .grades(new ArrayList<>())
                                         .build();
 
@@ -74,8 +72,7 @@ class EntryControllerIT {
         UpdateEntryDto dto = UpdateEntryDto.builder()
                                            .name("name2")
                                            .description("desc2")
-                                           .links(new ArrayList<>())
-                                           .grades(new ArrayList<>())
+                                           .links(List.of("link3", "link4"))
                                            .build();
 
         //Act
@@ -94,7 +91,7 @@ class EntryControllerIT {
                                         .id(1L)
                                         .name("name2")
                                         .description("desc2")
-                                        .links(new ArrayList<>())
+                                        .links(List.of("link3", "link4"))
                                         .grades(new ArrayList<>())
                                         .build();
 
@@ -141,7 +138,7 @@ class EntryControllerIT {
                                         .id(1L)
                                         .name("name")
                                         .description("desc")
-                                        .links(new ArrayList<>())
+                                        .links(List.of("link1", "link2"))
                                         .grades(new ArrayList<>())
                                         .build();
 
@@ -155,10 +152,12 @@ class EntryControllerIT {
     @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/entry/page.json")
     void getPageEntry() {
         // Arrange
-        SearchEntryDto searchEntryDto = SearchEntryDto.builder()
-                                                      .description("desc")
-                                                      .name("name")
-                                                      .build();
+        EntryListDto dto = EntryListDto.builder()
+                                       .id(1L)
+                                       .name("name")
+                                       .description("desc")
+                                       .links(List.of("link1", "link2"))
+                                       .build();
 
         // Act
         client.get()
@@ -167,7 +166,9 @@ class EntryControllerIT {
               // Assert
               .expectStatus().isOk()
               .expectBody()
-              .jsonPath("$.content[0].name").isEqualTo(searchEntryDto.getName())
-              .jsonPath("$.content[0].description").isEqualTo(searchEntryDto.getDescription());
+              .jsonPath("$.content[0].name").isEqualTo(dto.getName())
+              .jsonPath("$.content[0].description").isEqualTo(dto.getDescription())
+              .jsonPath("$.content[0].id").isEqualTo(dto.getId())
+              .jsonPath("$.content[0].links").value(Matchers.containsInAnyOrder(dto.getLinks().toArray()));
     }
 }

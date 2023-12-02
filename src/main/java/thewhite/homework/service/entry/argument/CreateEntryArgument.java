@@ -1,7 +1,6 @@
 package thewhite.homework.service.entry.argument;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 import thewhite.homework.model.Grade;
 
 import java.util.List;
@@ -15,6 +14,4 @@ public class CreateEntryArgument {
     String description;
 
     List<String> links;
-
-    List<Grade> grades;
 }

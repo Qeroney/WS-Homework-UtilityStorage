@@ -6,6 +6,15 @@
       "description": "desc"
     }
   ],
-  "entry_links": [],
+  "entry_links": [
+    {
+      "entry_id": 1,
+      "links": "link1"
+    },
+    {
+      "entry_id": 1,
+      "links": "link2"
+    }
+  ],
   "grade": []
 }

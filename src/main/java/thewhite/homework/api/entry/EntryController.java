@@ -10,15 +10,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-import thewhite.homework.api.entry.dto.CreateEntryDto;
-import thewhite.homework.api.entry.dto.EntryDto;
-import thewhite.homework.api.entry.dto.SearchEntryDto;
-import thewhite.homework.api.entry.dto.UpdateEntryDto;
+import thewhite.homework.api.entry.dto.*;
+import thewhite.homework.api.entry.mapper.EntryMapper;
 import thewhite.homework.model.Entry;
 import thewhite.homework.service.entry.EntryService;
 import thewhite.homework.service.entry.argument.SearchEntryArgument;
 
-import static thewhite.homework.api.entry.mapper.EntryMapper.ENTRY_MAPPER;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -29,33 +27,34 @@ public class EntryController {
 
     EntryService entryService;
 
+    EntryMapper entryMapper;
+
     @PostMapping("create")
     @Operation(description = "Создать запись")
     public EntryDto create(@RequestBody CreateEntryDto dto) {
-        Entry create = entryService.create(ENTRY_MAPPER.toCreateArgument(dto));
+        Entry create = entryService.create(entryMapper.toCreateArgument(dto));
 
-        return ENTRY_MAPPER.toDto(create);
+        return entryMapper.toDto(create);
     }
 
     @PutMapping("{id}/update")
     @ApiResponse(description = "Запись не найдена", responseCode = "404")
     @Operation(description = "Обновить запись")
     public EntryDto update(@PathVariable Long id, @RequestBody UpdateEntryDto dto) {
-        Entry update = entryService.update(id, ENTRY_MAPPER.toUpdateArgument(dto));
+        Entry update = entryService.update(id, entryMapper.toUpdateArgument(dto));
 
-        return ENTRY_MAPPER.toDto(update);
+        return entryMapper.toDto(update);
     }
 
     @GetMapping("page")
-    @ApiResponse(description = "Записи не найдены", responseCode = "404")
-    @Operation(description = "Получить page")
-    public Page<EntryDto> getPageEntry(SearchEntryDto dto,
-                                       @PageableDefault(sort = {"name", "description"})
-                                       Pageable pageable) {
+    @Operation(description = "Получить список записей с пейджинацией и сортировкой")
+    public PageEntry<EntryListDto> getPageEntry(SearchEntryDto dto,
+                                                @PageableDefault(sort = {"name", "description"}) Pageable pageable) {
 
-        SearchEntryArgument argument = ENTRY_MAPPER.toSearchArgument(dto);
+        SearchEntryArgument argument = entryMapper.toSearchArgument(dto);
         Page<Entry> page = entryService.getPageEntry(argument, pageable);
-        return page.map(ENTRY_MAPPER::toDto);
+        List<EntryListDto> entries = page.map(entryMapper::toDtoList).getContent();
+        return new PageEntry<>(entries, page.getTotalElements());
     }
 
     @GetMapping("{id}/get")
@@ -64,7 +63,7 @@ public class EntryController {
     public EntryDto get(@PathVariable Long id) {
         Entry existing = entryService.getExisting(id);
 
-        return ENTRY_MAPPER.toDto(existing);
+        return entryMapper.toDto(existing);
     }
 
     @DeleteMapping("{id}/delete")

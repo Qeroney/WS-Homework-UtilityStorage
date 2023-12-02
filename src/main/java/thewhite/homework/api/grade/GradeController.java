@@ -15,13 +15,13 @@ import thewhite.homework.action.grade.CreateGradeAction;
 import thewhite.homework.api.grade.dto.CreateGradeDto;
 import thewhite.homework.api.grade.dto.GradeDto;
 import thewhite.homework.api.grade.dto.SearchGradeDto;
+import thewhite.homework.api.grade.mapper.GradeMapper;
 import thewhite.homework.model.Grade;
 import thewhite.homework.service.grade.GradeService;
 import thewhite.homework.service.grade.argument.SearchGradeArgument;
 
+import java.util.List;
 import java.util.UUID;
-
-import static thewhite.homework.api.grade.mapper.GradeMapper.GRADE_MAPPER;
 
 @RequiredArgsConstructor
 @RestController
@@ -34,24 +34,26 @@ public class GradeController {
 
     CreateGradeAction action;
 
-    @GetMapping("{entryId}/page")
+    GradeMapper gradeMapper;
+
+    @GetMapping("page/{entryId}")
     @ApiResponse(description = "Оценка не найдена", responseCode = "404")
     @Operation(description = "Получения списка по идентификатору записи с полезностями")
-    public Page<GradeDto> getPageGrade(@PathVariable Long entryId, SearchGradeDto dto,
-                                       @PageableDefault(sort = {"rating"}, direction = Sort.Direction.ASC)
-                                    Pageable pageable) {
+    public PageGrade<GradeDto> getPageGrade(SearchGradeDto dto,
+                                            @PageableDefault(sort = {"rating"}, direction = Sort.Direction.ASC) Pageable pageable) {
 
-        SearchGradeArgument argument = GRADE_MAPPER.toSearchArgument(dto);
-        Page<Grade> page = gradeService.getPageGrade(argument, entryId, pageable);
-        return page.map(GRADE_MAPPER::toDto);
+        SearchGradeArgument argument = gradeMapper.toSearchArgument(dto);
+        Page<Grade> page = gradeService.getPageGrade(argument, pageable);
+        List<GradeDto> grades = page.map(gradeMapper::toDto).getContent();
+        return new PageGrade<>(grades, page.getTotalElements());
     }
 
     @PostMapping("create")
     @Operation(description = "Создать оценку")
     public GradeDto create(@RequestBody CreateGradeDto dto) {
-        Grade execute = action.execute(GRADE_MAPPER.toCreateArgument(dto));
+        Grade execute = action.execute(gradeMapper.toCreateArgument(dto));
 
-        return GRADE_MAPPER.toDto(execute);
+        return gradeMapper.toDto(execute);
     }
 
     @DeleteMapping("{id}/delete")

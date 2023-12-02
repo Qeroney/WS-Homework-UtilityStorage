@@ -1,7 +1,6 @@
 package thewhite.homework.service.grade.argument;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 import thewhite.homework.model.Entry;
 
 @Value

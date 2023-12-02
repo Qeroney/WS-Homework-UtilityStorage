@@ -1,7 +1,6 @@
 package thewhite.homework.action.grade;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
 import javax.validation.constraints.*;
 

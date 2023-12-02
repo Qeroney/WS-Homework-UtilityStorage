@@ -14,10 +14,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import thewhite.homework.api.grade.dto.CreateGradeDto;
 import thewhite.homework.api.grade.dto.GradeDto;
-import thewhite.homework.api.grade.dto.SearchGradeDto;
 import thewhite.homework.exception.MessageError;
 
 import java.util.UUID;
+
+import static org.hamcrest.Matchers.equalTo;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebClient
@@ -84,18 +85,22 @@ class GradeControllerIT {
     void getGradePage() {
         //Arrange
         long id = 1L;
-        SearchGradeDto dto = SearchGradeDto.builder()
-                                           .rating(5)
-                                           .build();
+        GradeDto dto = GradeDto.builder()
+                               .id(UUID.fromString("dbe50c38-66fc-49a0-b99b-b424dde50a6a"))
+                               .comment("com2")
+                               .rating(3)
+                               .build();
 
         //Act
         client.get()
-              .uri("/grade/"+ id +"/page")
+              .uri("/grade/page/" + id)
               .exchange()
               //Assert
               .expectStatus().isOk()
               .expectBody()
-              .jsonPath("$.content[0].rating").isEqualTo(dto.getRating());
+              .jsonPath("$.content[0].rating").isEqualTo(dto.getRating())
+              .jsonPath("$.content[0].comment").isEqualTo(dto.getComment())
+              .jsonPath("$.content[0].id").value(equalTo(dto.getId().toString()));
     }
 
     @Test

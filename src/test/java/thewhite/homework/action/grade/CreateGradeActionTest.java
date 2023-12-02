@@ -26,6 +26,7 @@ class CreateGradeActionTest {
     void create() {
         //Arrange
         Grade expectedGrade = Mockito.mock(Grade.class);
+        Entry entry = Mockito.mock(Entry.class);
         Long entryId = 1L;
 
         CreateGradeActionArgument argument = CreateGradeActionArgument.builder()
@@ -33,13 +34,6 @@ class CreateGradeActionTest {
                                                                       .comment("com")
                                                                       .entryId(entryId)
                                                                       .build();
-        Entry entry = Entry.builder()
-                           .id(entryId)
-                           .name("name")
-                           .description("desc")
-                           .grades(new ArrayList<>())
-                           .links(new ArrayList<>())
-                           .build();
 
         Mockito.when(entryService.getExisting(entryId)).thenReturn(entry);
         Mockito.when(gradeService.create(any())).thenReturn(expectedGrade);
@@ -48,29 +42,18 @@ class CreateGradeActionTest {
         Grade execute = action.execute(argument);
 
         //Assert
-        ArgumentCaptor<Long> longArgumentCaptor = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<CreateGradeArgument> gradeArgumentArgumentCaptor = ArgumentCaptor.forClass(CreateGradeArgument.class);
 
-        Mockito.verify(entryService).getExisting(longArgumentCaptor.capture());
         Mockito.verify(gradeService).create(gradeArgumentArgumentCaptor.capture());
 
         CreateGradeArgument expectedArgument = CreateGradeArgument.builder()
                                                                   .rating(5)
                                                                   .comment("com")
-                                                                  .entry(Entry.builder()
-                                                                              .id(entryId)
-                                                                              .name("name")
-                                                                              .description("desc")
-                                                                              .links(new ArrayList<>())
-                                                                              .grades(new ArrayList<>())
-                                                                              .build())
+                                                                  .entry(entry)
                                                                   .build();
 
-        Assertions.assertThat(execute).isEqualTo(expectedGrade);
+        Assertions.assertThat(execute).isSameAs(expectedGrade);
 
-        Assertions.assertThat(longArgumentCaptor.getValue())
-                  .usingRecursiveComparison()
-                  .isEqualTo(entryId);
         Assertions.assertThat(gradeArgumentArgumentCaptor.getValue())
                   .usingRecursiveComparison()
                   .isEqualTo(expectedArgument);

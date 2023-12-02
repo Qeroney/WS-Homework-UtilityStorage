@@ -1,7 +1,6 @@
 package thewhite.homework.api.entry.dto;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
 @Value
 @Builder

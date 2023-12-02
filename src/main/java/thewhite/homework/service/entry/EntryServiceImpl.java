@@ -2,6 +2,7 @@ package thewhite.homework.service.entry;
 
 import com.querydsl.core.types.Predicate;
 import lombok.AccessLevel;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
@@ -32,7 +33,7 @@ public class EntryServiceImpl implements EntryService {
 
     @Override
     @Transactional
-    public Entry create(@NotNull CreateEntryArgument argument) {
+    public Entry create(@NonNull CreateEntryArgument argument) {
         return repository.save(Entry.builder()
                                     .name(argument.getName())
                                     .description(argument.getDescription())
@@ -51,13 +52,13 @@ public class EntryServiceImpl implements EntryService {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void delete(@NotNull Long id) {
+    public void delete(@NonNull Long id) {
         repository.deleteById(id);
     }
 
     @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public Entry update(@NotNull Long id, @NotNull UpdateEntryArgument argument) {
+    public Entry update(@NonNull Long id, @NonNull UpdateEntryArgument argument) {
         Entry entry = getExisting(id);
 
         entry.setName(argument.getName());
@@ -69,7 +70,7 @@ public class EntryServiceImpl implements EntryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Entry getExisting(@NotNull Long id) {
+    public Entry getExisting(@NonNull Long id) {
         return repository.findById(id)
                          .orElseThrow(() -> new NotFoundException("Запись не найдена"));
     }

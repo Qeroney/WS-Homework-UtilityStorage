@@ -11,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "entry")
 public class Entry {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,7 +23,6 @@ public class Entry {
     String description;
 
     @ElementCollection
-    @CollectionTable(name = "entry_links", joinColumns = @JoinColumn(name = "entry_id"))
     @Column(name = "links")
     List<String> links;
 
