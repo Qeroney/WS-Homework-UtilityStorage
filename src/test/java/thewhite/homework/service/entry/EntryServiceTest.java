@@ -17,6 +17,7 @@ import thewhite.homework.service.entry.argument.UpdateEntryArgument;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -36,9 +37,9 @@ class EntryServiceTest {
         CreateEntryArgument argument = CreateEntryArgument.builder()
                                                           .name("name")
                                                           .description("desc")
-                                                          .links(new ArrayList<>())
-                                                          .grades(new ArrayList<>())
+                                                          .links(List.of("link1", "link2"))
                                                           .build();
+
         Mockito.when(entryRepository.save(any())).thenReturn(entry);
 
         //Act
@@ -51,7 +52,7 @@ class EntryServiceTest {
 
         Entry expectedEntry = Entry.builder()
                                    .name("name")
-                                   .links(new ArrayList<>())
+                                   .links(List.of("link1", "link2"))
                                    .description("desc")
                                    .grades(new ArrayList<>())
                                    .build();
@@ -89,15 +90,14 @@ class EntryServiceTest {
         UpdateEntryArgument argument = UpdateEntryArgument.builder()
                                                           .name("name")
                                                           .description("desc")
-                                                          .links(new ArrayList<>())
-                                                          .grades(new ArrayList<>())
+                                                          .links(List.of("link1", "link2"))
                                                           .build();
+
         Mockito.when(entryRepository.findById(id)).thenReturn(Optional.of(Entry.builder()
                                                                                .id(id)
                                                                                .name("name")
-                                                                               .links(new ArrayList<>())
+                                                                               .links(List.of("link1", "link2"))
                                                                                .description("desc")
-                                                                               .grades(new ArrayList<>())
                                                                                .build()));
         Mockito.when(entryRepository.save(any())).thenReturn(entry);
 
@@ -115,9 +115,9 @@ class EntryServiceTest {
                                    .id(id)
                                    .name("name")
                                    .description("desc")
-                                   .links(new ArrayList<>())
-                                   .grades(new ArrayList<>())
+                                   .links(List.of("link1", "link2"))
                                    .build();
+
         Assertions.assertThat(longArgumentCaptor.getValue())
                   .usingRecursiveComparison()
                   .isEqualTo(id);

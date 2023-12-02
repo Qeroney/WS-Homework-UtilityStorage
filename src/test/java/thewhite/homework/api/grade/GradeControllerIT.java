@@ -98,9 +98,9 @@ class GradeControllerIT {
               //Assert
               .expectStatus().isOk()
               .expectBody()
-              .jsonPath("$.content[0].rating").isEqualTo(dto.getRating())
-              .jsonPath("$.content[0].comment").isEqualTo(dto.getComment())
-              .jsonPath("$.content[0].id").value(equalTo(dto.getId().toString()));
+              .jsonPath("$.grades[0].rating").isEqualTo(dto.getRating())
+              .jsonPath("$.grades[0].comment").isEqualTo(dto.getComment())
+              .jsonPath("$.grades[0].id").value(equalTo(dto.getId().toString()));
     }
 
     @Test

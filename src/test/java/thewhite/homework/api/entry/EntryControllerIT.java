@@ -166,9 +166,9 @@ class EntryControllerIT {
               // Assert
               .expectStatus().isOk()
               .expectBody()
-              .jsonPath("$.content[0].name").isEqualTo(dto.getName())
-              .jsonPath("$.content[0].description").isEqualTo(dto.getDescription())
-              .jsonPath("$.content[0].id").isEqualTo(dto.getId())
-              .jsonPath("$.content[0].links").value(Matchers.containsInAnyOrder(dto.getLinks().toArray()));
+              .jsonPath("$.entries[0].name").isEqualTo(dto.getName())
+              .jsonPath("$.entries[0].description").isEqualTo(dto.getDescription())
+              .jsonPath("$.entries[0].id").isEqualTo(dto.getId())
+              .jsonPath("$.entries[0].links").value(Matchers.containsInAnyOrder(dto.getLinks().toArray()));
     }
 }
