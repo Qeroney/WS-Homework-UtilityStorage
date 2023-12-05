@@ -6,11 +6,11 @@ import com.jupiter.tools.spring.test.postgres.annotation.meta.EnablePostgresInte
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.assertj.core.api.Assertions;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import thewhite.homework.api.entry.dto.*;
 
@@ -77,7 +77,7 @@ class EntryControllerIT {
 
         //Act
         EntryDto responseBody = client.put()
-                                      .uri("entry/" + id + "/update")
+                                      .uri("entry/{id}/update", id)
                                       .bodyValue(dto)
                                       .exchange()
                                       .expectStatus()
@@ -110,7 +110,7 @@ class EntryControllerIT {
 
         //Act
         client.delete()
-              .uri("entry/" + id + "/delete")
+              .uri("entry/{id}/delete", id)
               .exchange()
               //Assert
               .expectStatus()
@@ -125,7 +125,7 @@ class EntryControllerIT {
 
         //Act
         EntryDto responseBody = client.get()
-                                      .uri("/entry/" + id + "/get")
+                                      .uri("/entry/{id}/get", id)
                                       .exchange()
                                       .expectStatus()
                                       .isOk()
@@ -152,23 +152,75 @@ class EntryControllerIT {
     @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/entry/page.json")
     void getPageEntry() {
         // Arrange
-        EntryListDto dto = EntryListDto.builder()
-                                       .id(1L)
-                                       .name("name")
-                                       .description("desc")
-                                       .links(List.of("link1", "link2"))
-                                       .build();
+        SearchEntryDto dto = SearchEntryDto.builder()
+                                           .name("Love")
+                                           .description("Homeland")
+                                           .build();
 
         // Act
-        client.get()
-              .uri("/entry/page")
-              .exchange()
-              // Assert
-              .expectStatus().isOk()
-              .expectBody()
-              .jsonPath("$.entries[0].name").isEqualTo(dto.getName())
-              .jsonPath("$.entries[0].description").isEqualTo(dto.getDescription())
-              .jsonPath("$.entries[0].id").isEqualTo(dto.getId())
-              .jsonPath("$.entries[0].links").value(Matchers.containsInAnyOrder(dto.getLinks().toArray()));
+        PageEntry<EntryListDto> responseBody = client.get()
+                                                     .uri(uriBuilder -> uriBuilder.path("/entry/page")
+                                                                                  .queryParam("name", dto.getName())
+                                                                                  .queryParam("description", dto.getDescription())
+                                                                                  .build())
+                                                     .exchange()
+                                                     .expectStatus()
+                                                     .isOk()
+                                                     .expectBody(new ParameterizedTypeReference<PageEntry<EntryListDto>>() {})
+                                                     .returnResult()
+                                                     .getResponseBody();
+
+        // Assert
+        PageEntry<EntryListDto> expectedBody = PageEntry.<EntryListDto>builder()
+                                                        .totalElements(1L)
+                                                        .entries(List.of(EntryListDto.builder()
+                                                                                     .id(1L)
+                                                                                     .name("Love")
+                                                                                     .description("Homeland")
+                                                                                     .links(List.of("link1", "link2"))
+                                                                                     .build()))
+                                                        .build();
+
+        Assertions.assertThat(responseBody)
+                  .usingRecursiveComparison()
+                  .withStrictTypeChecking()
+                  .isEqualTo(expectedBody);
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/entry/page.json")
+    void getPageEntryWithoutParams() {
+        // Act & Arrange
+        PageEntry<EntryListDto> responseBody = client.get()
+                                                     .uri(uriBuilder -> uriBuilder.path("/entry/page")
+                                                                                  .build())
+                                                     .exchange()
+                                                     .expectStatus()
+                                                     .isOk()
+                                                     .expectBody(new ParameterizedTypeReference<PageEntry<EntryListDto>>() {})
+                                                     .returnResult()
+                                                     .getResponseBody();
+
+        // Assert
+        PageEntry<EntryListDto> expectedBody = PageEntry.<EntryListDto>builder()
+                                                        .totalElements(2L)
+                                                        .entries(List.of(EntryListDto.builder()
+                                                                                     .id(2L)
+                                                                                     .name("Clothes")
+                                                                                     .description("Wear")
+                                                                                     .links(List.of("link3", "link4"))
+                                                                                     .build(),
+                                                                         EntryListDto.builder()
+                                                                                     .id(1L)
+                                                                                     .name("Love")
+                                                                                     .description("Homeland")
+                                                                                     .links(List.of("link1", "link2"))
+                                                                                     .build()))
+                                                        .build();
+
+        Assertions.assertThat(responseBody)
+                  .usingRecursiveComparison()
+                  .withStrictTypeChecking()
+                  .isEqualTo(expectedBody);
     }
 }

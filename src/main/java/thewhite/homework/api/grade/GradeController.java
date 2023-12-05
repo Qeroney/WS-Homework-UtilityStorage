@@ -36,7 +36,7 @@ public class GradeController {
 
     GradeMapper gradeMapper;
 
-    @GetMapping("page/{entryId}")
+    @GetMapping("page")
     @ApiResponse(description = "Оценка не найдена", responseCode = "404")
     @Operation(description = "Получения списка по идентификатору записи с полезностями")
     public PageGrade<GradeDto> getPageGrade(SearchGradeDto dto,
@@ -44,8 +44,8 @@ public class GradeController {
 
         SearchGradeArgument argument = gradeMapper.toSearchArgument(dto);
         Page<Grade> page = gradeService.getPageGrade(argument, pageable);
-        List<GradeDto> grades = page.map(gradeMapper::toDto).getContent();
-        return new PageGrade<>(grades, page.getTotalElements());
+        Page<GradeDto> grades = page.map(gradeMapper::toDto);
+        return new PageGrade<>(grades.getContent(), page.getTotalElements());
     }
 
     @PostMapping("create")

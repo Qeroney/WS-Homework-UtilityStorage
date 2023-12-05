@@ -10,15 +10,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import thewhite.homework.api.grade.dto.CreateGradeDto;
 import thewhite.homework.api.grade.dto.GradeDto;
+import thewhite.homework.api.grade.dto.SearchGradeDto;
 import thewhite.homework.exception.MessageError;
 
+import java.util.List;
 import java.util.UUID;
-
-import static org.hamcrest.Matchers.equalTo;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebClient
@@ -73,7 +74,7 @@ class GradeControllerIT {
 
         //Act
         client.delete()
-              .uri("grade/" + id + "/delete")
+              .uri("grade/{id}/delete", id)
               .exchange()
               //Assert
               .expectStatus()
@@ -84,23 +85,82 @@ class GradeControllerIT {
     @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/grade/page.json")
     void getGradePage() {
         //Arrange
-        long id = 1L;
-        GradeDto dto = GradeDto.builder()
-                               .id(UUID.fromString("dbe50c38-66fc-49a0-b99b-b424dde50a6a"))
-                               .comment("com2")
-                               .rating(3)
-                               .build();
+        SearchGradeDto dto = SearchGradeDto.builder()
+                                           .rating(5)
+                                           .entryId(1L)
+                                           .build();
 
         //Act
-        client.get()
-              .uri("/grade/page/" + id)
-              .exchange()
-              //Assert
-              .expectStatus().isOk()
-              .expectBody()
-              .jsonPath("$.grades[0].rating").isEqualTo(dto.getRating())
-              .jsonPath("$.grades[0].comment").isEqualTo(dto.getComment())
-              .jsonPath("$.grades[0].id").value(equalTo(dto.getId().toString()));
+        PageGrade<GradeDto> responseBody = client.get()
+                                                 .uri(uriBuilder -> uriBuilder.path("/grade/page")
+                                                                              .queryParam("rating", dto.getRating())
+                                                                              .build())
+                                                 .exchange()
+                                                 .expectStatus()
+                                                 .isOk()
+                                                 .expectBody(new ParameterizedTypeReference<PageGrade<GradeDto>>() {})
+                                                 .returnResult()
+                                                 .getResponseBody();
+
+        //Assert
+        PageGrade<GradeDto> expectedBody = PageGrade.<GradeDto>builder()
+                                                    .totalElements(1L)
+                                                    .grades(List.of(GradeDto.builder()
+                                                                            .id(UUID.fromString("d1b4e136-647c-4136-88e0-f2a8f19dfb2e"))
+                                                                            .comment("com")
+                                                                            .rating(5)
+                                                                            .build()))
+                                                    .build();
+
+        Assertions.assertThat(responseBody)
+                  .usingRecursiveComparison()
+                  .withStrictTypeChecking()
+                  .isEqualTo(expectedBody);
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/grade/page.json")
+    void getGradePageWithoutParams() {
+        //Act & Arrange
+        PageGrade<GradeDto> responseBody = client.get()
+                                                 .uri(uriBuilder -> uriBuilder.path("/grade/page")
+                                                                              .build())
+                                                 .exchange()
+                                                 .expectStatus()
+                                                 .isOk()
+                                                 .expectBody(new ParameterizedTypeReference<PageGrade<GradeDto>>() {})
+                                                 .returnResult()
+                                                 .getResponseBody();
+
+        //Assert
+        PageGrade<GradeDto> expectedBody = PageGrade.<GradeDto>builder()
+                                                    .totalElements(4L)
+                                                    .grades(List.of(GradeDto.builder()
+                                                                            .id(UUID.fromString("e35155fb-d668-4a96-8286-68dcf446f080"))
+                                                                            .rating(2)
+                                                                            .comment("com4")
+                                                                            .build(),
+                                                                    GradeDto.builder()
+                                                                            .id(UUID.fromString("f759cfaa-e10a-4799-9e06-11fdd479dee1"))
+                                                                            .rating(3)
+                                                                            .comment("com3")
+                                                                            .build(),
+                                                                    GradeDto.builder()
+                                                                            .id(UUID.fromString("dbe50c38-66fc-49a0-b99b-b424dde50a6a"))
+                                                                            .rating(4)
+                                                                            .comment("com2")
+                                                                            .build(),
+                                                                    GradeDto.builder()
+                                                                            .id(UUID.fromString("d1b4e136-647c-4136-88e0-f2a8f19dfb2e"))
+                                                                            .comment("com")
+                                                                            .rating(5)
+                                                                            .build()))
+                                                    .build();
+
+        Assertions.assertThat(responseBody)
+                  .usingRecursiveComparison()
+                  .withStrictTypeChecking()
+                  .isEqualTo(expectedBody);
     }
 
     @Test
@@ -168,7 +228,7 @@ class GradeControllerIT {
         // Arrange
         CreateGradeDto dto = CreateGradeDto.builder()
                                            .comment("com")
-                                           .entryId(2L)
+                                           .entryId(5L)
                                            .rating(5)
                                            .build();
 

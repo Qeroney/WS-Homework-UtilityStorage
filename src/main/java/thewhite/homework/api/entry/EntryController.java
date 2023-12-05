@@ -53,8 +53,8 @@ public class EntryController {
 
         SearchEntryArgument argument = entryMapper.toSearchArgument(dto);
         Page<Entry> page = entryService.getPageEntry(argument, pageable);
-        List<EntryListDto> entries = page.map(entryMapper::toDtoList).getContent();
-        return new PageEntry<>(entries, page.getTotalElements());
+        Page<EntryListDto> entries = page.map(entryMapper::toDtoList);
+        return new PageEntry<>(entries.getContent(), page.getTotalElements());
     }
 
     @GetMapping("{id}/get")

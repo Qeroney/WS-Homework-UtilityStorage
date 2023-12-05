@@ -3,6 +3,7 @@ package thewhite.homework.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -27,5 +28,6 @@ public class Entry {
     List<String> links;
 
     @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    List<Grade> grades;
+    @Builder.Default
+    List<Grade> grades = new ArrayList<>();
 }

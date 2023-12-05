@@ -19,9 +19,6 @@ import thewhite.homework.service.entry.argument.SearchEntryArgument;
 import thewhite.homework.service.entry.argument.UpdateEntryArgument;
 import thewhite.homework.utils.QPredicates;
 
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -38,7 +35,6 @@ public class EntryServiceImpl implements EntryService {
                                     .name(argument.getName())
                                     .description(argument.getDescription())
                                     .links(argument.getLinks())
-                                    .grades(new ArrayList<>())
                                     .build());
     }
 
