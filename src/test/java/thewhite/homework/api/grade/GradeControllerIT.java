@@ -1,69 +1,39 @@
 package thewhite.homework.api.grade;
 
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.jupiter.tools.spring.test.postgres.annotation.meta.EnablePostgresIntegrationTest;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import thewhite.homework.api.PageDto;
 import thewhite.homework.api.grade.dto.CreateGradeDto;
 import thewhite.homework.api.grade.dto.GradeDto;
+import thewhite.homework.api.grade.dto.SearchGradeDto;
 import thewhite.homework.exception.MessageError;
-import thewhite.homework.model.Entry;
-import thewhite.homework.model.Grade;
-import thewhite.homework.repository.entry.EntryRepository;
-import thewhite.homework.repository.grade.GradeRepository;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebClient
-@ExtendWith(SoftAssertionsExtension.class)
+@EnablePostgresIntegrationTest
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class GradeControllerIT {
+class GradeControllerIT {
 
     @Autowired
     WebTestClient client;
 
-    @Autowired
-    GradeRepository gradeRepository;
-
-    @Autowired
-    EntryRepository entryRepository;
-
-    @BeforeEach
-    void setUp() {
-        Map<Long, Entry> entries = new HashMap<>();
-        entries.put(1L, Entry.builder()
-                             .id(1L)
-                             .name("name")
-                             .description("desc")
-                             .link("link")
-                             .build());
-        ReflectionTestUtils.setField(entryRepository, "entries", entries);
-        Map<UUID, Grade> gradeMap = new HashMap<>();
-        gradeMap.put(UUID.fromString("1ed5e3ea-2ab6-4dcd-8c64-a9ef8334bbb0"),
-                     Grade.builder()
-                          .id(UUID.fromString("1ed5e3ea-2ab6-4dcd-8c64-a9ef8334bbb1"))
-                          .entryId(1L)
-                          .comment("comment")
-                          .rating(3)
-                          .build());
-        ReflectionTestUtils.setField(gradeRepository, "gradeMap", gradeMap);
-    }
-
     @Test
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/grade/create.json")
+    @ExpectedDataSet(value = "datasets/api/files/grade/expected_create.json")
     void create() {
         //Arrange
         CreateGradeDto dto = CreateGradeDto.builder()
@@ -75,7 +45,6 @@ public class GradeControllerIT {
         //Act
         GradeDto responseBody = client.post()
                                       .uri("grade/create")
-                                      .contentType(MediaType.APPLICATION_JSON)
                                       .bodyValue(dto)
                                       .exchange()
                                       .expectStatus()
@@ -87,7 +56,6 @@ public class GradeControllerIT {
         //Assert
         GradeDto expectedBody = GradeDto.builder()
                                         .comment("com")
-                                        .entryId(1L)
                                         .rating(5)
                                         .build();
 
@@ -99,13 +67,15 @@ public class GradeControllerIT {
     }
 
     @Test
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/grade/delete.json")
+    @ExpectedDataSet(value = "datasets/api/files/grade/expected_delete.json")
     void delete() {
         //Arrange
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("d1b4e136-647c-4136-88e0-f2a8f19dfb2e");
 
         //Act
         client.delete()
-              .uri("grade/" + id + "/delete")
+              .uri("grade/{id}/delete", id)
               .exchange()
               //Assert
               .expectStatus()
@@ -113,30 +83,79 @@ public class GradeControllerIT {
     }
 
     @Test
-    void findEntryById() {
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/grade/page.json")
+    void getGradePage() {
+        //Arrange
+        SearchGradeDto dto = SearchGradeDto.builder()
+                                           .rating(5)
+                                           .entryId(1L)
+                                           .build();
+
+        //Act
+        PageDto<GradeDto> responseBody = client.get()
+                                               .uri(uriBuilder -> uriBuilder.path("/grade/page")
+                                                                            .queryParam("entryId", dto.getEntryId())
+                                                                            .queryParam("rating", dto.getRating())
+                                                                            .build())
+                                               .exchange()
+                                               .expectStatus()
+                                               .isOk()
+                                               .expectBody(new ParameterizedTypeReference<PageDto<GradeDto>>() {})
+                                               .returnResult()
+                                               .getResponseBody();
+
+        //Assert
+        PageDto<GradeDto> expectedBody = PageDto.<GradeDto>builder()
+                                                .totalElements(1L)
+                                                .contents(List.of(GradeDto.builder()
+                                                                          .id(UUID.fromString("d1b4e136-647c-4136-88e0-f2a8f19dfb2e"))
+                                                                          .comment("com")
+                                                                          .rating(5)
+                                                                          .build()))
+                                                .build();
+
+        Assertions.assertThat(responseBody)
+                  .usingRecursiveComparison()
+                  .withStrictTypeChecking()
+                  .isEqualTo(expectedBody);
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/grade/page.json")
+    void getGradePageWithoutParams() {
         //Arrange
         long entryId = 1L;
 
         //Act
-        List<GradeDto> responseBody = client.get()
-                                            .uri("grade/" + entryId + "/getAll")
-                                            .exchange()
-                                            .expectStatus()
-                                            .isOk()
-                                            .expectBodyList(GradeDto.class)
-                                            .returnResult()
-                                            .getResponseBody();
+        PageDto<GradeDto> responseBody = client.get()
+                                               .uri(uriBuilder -> uriBuilder.path("/grade/page")
+                                                                            .queryParam("entryId", entryId)
+                                                                            .build())
+                                               .exchange()
+                                               .expectStatus()
+                                               .isOk()
+                                               .expectBody(new ParameterizedTypeReference<PageDto<GradeDto>>() {})
+                                               .returnResult()
+                                               .getResponseBody();
 
         //Assert
-        List<GradeDto> expectedBody = Lists.newArrayList(GradeDto.builder()
-                                                                 .entryId(entryId)
-                                                                 .rating(3)
-                                                                 .comment("comment")
-                                                                 .build());
+        PageDto<GradeDto> expectedBody = PageDto.<GradeDto>builder()
+                                                .totalElements(2L)
+                                                .contents(List.of(GradeDto.builder()
+                                                                          .id(UUID.fromString("dbe50c38-66fc-49a0-b99b-b424dde50a6a"))
+                                                                          .rating(4)
+                                                                          .comment("com2")
+                                                                          .build(),
+                                                                  GradeDto.builder()
+                                                                          .id(UUID.fromString("d1b4e136-647c-4136-88e0-f2a8f19dfb2e"))
+                                                                          .comment("com")
+                                                                          .rating(5)
+                                                                          .build()))
+                                                .build();
+
         Assertions.assertThat(responseBody)
                   .usingRecursiveComparison()
                   .withStrictTypeChecking()
-                  .ignoringFields("id")
                   .isEqualTo(expectedBody);
     }
 
@@ -205,7 +224,7 @@ public class GradeControllerIT {
         // Arrange
         CreateGradeDto dto = CreateGradeDto.builder()
                                            .comment("com")
-                                           .entryId(2L)
+                                           .entryId(5L)
                                            .rating(5)
                                            .build();
 

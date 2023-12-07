@@ -1,8 +1,8 @@
-package thewhite.homework.action.create;
+package thewhite.homework.action.grade;
 
-import jakarta.validation.constraints.*;
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
+
+import javax.validation.constraints.*;
 
 @Value
 @Builder

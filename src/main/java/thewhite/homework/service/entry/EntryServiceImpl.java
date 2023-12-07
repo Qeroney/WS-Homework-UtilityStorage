@@ -1,18 +1,23 @@
 package thewhite.homework.service.entry;
 
+import com.querydsl.core.types.Predicate;
 import lombok.AccessLevel;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import thewhite.homework.exception.NotFoundException;
 import thewhite.homework.model.Entry;
-import thewhite.homework.repository.entry.EntryRepository;
+import thewhite.homework.model.QEntry;
+import thewhite.homework.repository.EntryRepository;
 import thewhite.homework.service.entry.argument.CreateEntryArgument;
+import thewhite.homework.service.entry.argument.SearchEntryArgument;
 import thewhite.homework.service.entry.argument.UpdateEntryArgument;
-
-import java.util.Optional;
+import thewhite.homework.utils.QPredicates;
 
 @Service
 @RequiredArgsConstructor
@@ -21,38 +26,55 @@ public class EntryServiceImpl implements EntryService {
 
     EntryRepository repository;
 
+    QEntry qEntry = QEntry.entry;
+
     @Override
-    public Entry create(CreateEntryArgument argument) {
+    @Transactional
+    public Entry create(@NonNull CreateEntryArgument argument) {
         return repository.save(Entry.builder()
                                     .name(argument.getName())
                                     .description(argument.getDescription())
-                                    .link(argument.getLink())
+                                    .links(argument.getLinks())
                                     .build());
     }
 
     @Override
-    public Page<Entry> findEntriesByName(String name, Pageable pageable) {
-        return repository.findByName(name, pageable);
+    @Transactional(readOnly = true)
+    public Page<Entry> getPageEntry(SearchEntryArgument argument, Pageable pageable) {
+        Predicate predicate = buildPredicate(argument);
+
+        return repository.findAll(predicate, pageable);
     }
 
     @Override
-    public void delete(Long id) {
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void delete(@NonNull Long id) {
         repository.deleteById(id);
     }
 
     @Override
-    public Entry update(Long id, UpdateEntryArgument argument) {
-        return repository.update(id, Entry.builder()
-                                          .id(id)
-                                          .name(argument.getName())
-                                          .description(argument.getDescription())
-                                          .link(argument.getLink())
-                                          .build());
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public Entry update(@NonNull Long id, @NonNull UpdateEntryArgument argument) {
+        Entry entry = getExisting(id);
+
+        entry.setName(argument.getName());
+        entry.setDescription(argument.getDescription());
+        entry.setLinks(argument.getLinks());
+
+        return repository.save(entry);
     }
 
     @Override
-    public Entry getExisting(Long id) {
-        return Optional.ofNullable(repository.findById(id))
-                       .orElseThrow(() -> new NotFoundException("Запись не найдена"));
+    @Transactional(readOnly = true)
+    public Entry getExisting(@NonNull Long id) {
+        return repository.findById(id)
+                         .orElseThrow(() -> new NotFoundException("Запись не найдена"));
+    }
+
+    private Predicate buildPredicate(SearchEntryArgument argument) {
+        return QPredicates.builder()
+                          .add(argument.getName(), qEntry.name::containsIgnoreCase)
+                          .add(argument.getDescription(), qEntry.description::containsIgnoreCase)
+                          .buildAnd();
     }
 }

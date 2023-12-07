@@ -1,14 +1,15 @@
 package thewhite.homework.service.grade.argument;
 
-import lombok.Builder;
-import lombok.Value;
-
-import java.util.UUID;
+import lombok.*;
+import thewhite.homework.model.Entry;
 
 @Value
 @Builder
 public class CreateGradeArgument {
-    Long entryId;
+
+    Entry entry;
+
     String comment;
+
     Integer rating;
 }

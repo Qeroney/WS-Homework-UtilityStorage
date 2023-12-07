@@ -7,17 +7,15 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-import thewhite.homework.api.entry.dto.CreateEntryDto;
-import thewhite.homework.api.entry.dto.EntryDto;
-import thewhite.homework.api.entry.dto.UpdateEntryDto;
+import thewhite.homework.api.PageDto;
+import thewhite.homework.api.entry.dto.*;
 import thewhite.homework.api.entry.mapper.EntryMapper;
 import thewhite.homework.model.Entry;
 import thewhite.homework.service.entry.EntryService;
-
-import java.util.List;
+import thewhite.homework.service.entry.argument.SearchEntryArgument;
 
 @RequiredArgsConstructor
 @RestController
@@ -47,17 +45,15 @@ public class EntryController {
         return entryMapper.toDto(update);
     }
 
-    @GetMapping("find/{name}")
-    @ApiResponse(description = "Запись не найдена", responseCode = "404")
-    @Operation(description = "Получить запись по name")
-    public Page<EntryDto> findEntryByName(@PathVariable String name,
-                                          @RequestParam(defaultValue = "0") int page,
-                                          @RequestParam(defaultValue = "10") int size) {
-        PageRequest pageable = PageRequest.of(page, size);
-        Page<Entry> entries = entryService.findEntriesByName(name, pageable);
+    @GetMapping("page")
+    @Operation(description = "Получить список записей с пейджинацией и сортировкой")
+    public PageDto<EntryListDto> getPageEntry(SearchEntryDto dto,
+                                              @PageableDefault(sort = {"name", "description"}) Pageable pageable) {
 
-        List<EntryDto> dtos = entryMapper.toDtoList(entries.getContent());
-        return new PageImpl<>(dtos, pageable, entries.getTotalElements());
+        SearchEntryArgument argument = entryMapper.toSearchArgument(dto);
+        Page<Entry> page = entryService.getPageEntry(argument, pageable);
+        Page<EntryListDto> entries = page.map(entryMapper::toDtoList);
+        return new PageDto<>(entries.getContent(), page.getTotalElements());
     }
 
     @GetMapping("{id}/get")

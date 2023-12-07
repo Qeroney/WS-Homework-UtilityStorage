@@ -1,9 +1,11 @@
 package thewhite.homework.service.grade;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import thewhite.homework.model.Grade;
 import thewhite.homework.service.grade.argument.CreateGradeArgument;
+import thewhite.homework.service.grade.argument.SearchGradeArgument;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface GradeService {
@@ -12,5 +14,5 @@ public interface GradeService {
 
     void delete(UUID id);
 
-    List<Grade> getAllExisting(Long entryId);
+    Page<Grade> getPageGrade(SearchGradeArgument argument, Pageable pageable);
 }

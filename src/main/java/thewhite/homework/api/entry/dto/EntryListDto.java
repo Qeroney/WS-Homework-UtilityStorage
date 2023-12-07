@@ -1,13 +1,13 @@
 package thewhite.homework.api.entry.dto;
 
-import lombok.*;
-import thewhite.homework.api.grade.dto.GradeDto;
+import lombok.Builder;
+import lombok.Value;
 
 import java.util.List;
 
 @Value
 @Builder
-public class EntryDto {
+public class EntryListDto {
 
     Long id;
 
@@ -16,6 +16,4 @@ public class EntryDto {
     String description;
 
     List<String> links;
-
-    List<GradeDto> grades;
 }
