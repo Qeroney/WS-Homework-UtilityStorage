@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import thewhite.homework.api.PageDto;
 import thewhite.homework.api.entry.dto.*;
 
 import java.util.ArrayList;
@@ -158,22 +159,22 @@ class EntryControllerIT {
                                            .build();
 
         // Act
-        PageEntry<EntryListDto> responseBody = client.get()
-                                                     .uri(uriBuilder -> uriBuilder.path("/entry/page")
+        PageDto<EntryListDto> responseBody = client.get()
+                                                   .uri(uriBuilder -> uriBuilder.path("/entry/page")
                                                                                   .queryParam("name", dto.getName())
                                                                                   .queryParam("description", dto.getDescription())
                                                                                   .build())
-                                                     .exchange()
-                                                     .expectStatus()
-                                                     .isOk()
-                                                     .expectBody(new ParameterizedTypeReference<PageEntry<EntryListDto>>() {})
-                                                     .returnResult()
-                                                     .getResponseBody();
+                                                   .exchange()
+                                                   .expectStatus()
+                                                   .isOk()
+                                                   .expectBody(new ParameterizedTypeReference<PageDto<EntryListDto>>() {})
+                                                   .returnResult()
+                                                   .getResponseBody();
 
         // Assert
-        PageEntry<EntryListDto> expectedBody = PageEntry.<EntryListDto>builder()
+        PageDto<EntryListDto> expectedBody = PageDto.<EntryListDto>builder()
                                                         .totalElements(1L)
-                                                        .entries(List.of(EntryListDto.builder()
+                                                        .contents(List.of(EntryListDto.builder()
                                                                                      .id(1L)
                                                                                      .name("Love")
                                                                                      .description("Homeland")
@@ -191,20 +192,20 @@ class EntryControllerIT {
     @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/entry/page.json")
     void getPageEntryWithoutParams() {
         // Act & Arrange
-        PageEntry<EntryListDto> responseBody = client.get()
+        PageDto<EntryListDto> responseBody = client.get()
                                                      .uri(uriBuilder -> uriBuilder.path("/entry/page")
                                                                                   .build())
                                                      .exchange()
                                                      .expectStatus()
                                                      .isOk()
-                                                     .expectBody(new ParameterizedTypeReference<PageEntry<EntryListDto>>() {})
+                                                     .expectBody(new ParameterizedTypeReference<PageDto<EntryListDto>>() {})
                                                      .returnResult()
                                                      .getResponseBody();
 
         // Assert
-        PageEntry<EntryListDto> expectedBody = PageEntry.<EntryListDto>builder()
+        PageDto<EntryListDto> expectedBody = PageDto.<EntryListDto>builder()
                                                         .totalElements(2L)
-                                                        .entries(List.of(EntryListDto.builder()
+                                                        .contents(List.of(EntryListDto.builder()
                                                                                      .id(2L)
                                                                                      .name("Clothes")
                                                                                      .description("Wear")

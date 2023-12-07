@@ -10,8 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import thewhite.homework.action.grade.CreateGradeAction;
+import thewhite.homework.api.PageDto;
 import thewhite.homework.api.grade.dto.CreateGradeDto;
 import thewhite.homework.api.grade.dto.GradeDto;
 import thewhite.homework.api.grade.dto.SearchGradeDto;
@@ -20,12 +22,13 @@ import thewhite.homework.model.Grade;
 import thewhite.homework.service.grade.GradeService;
 import thewhite.homework.service.grade.argument.SearchGradeArgument;
 
-import java.util.List;
+import javax.validation.Valid;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("grade")
+@Validated
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @Tag(name = "Контроллер для работы с оценками")
 public class GradeController {
@@ -39,13 +42,13 @@ public class GradeController {
     @GetMapping("page")
     @ApiResponse(description = "Оценка не найдена", responseCode = "404")
     @Operation(description = "Получения списка по идентификатору записи с полезностями")
-    public PageGrade<GradeDto> getPageGrade(SearchGradeDto dto,
-                                            @PageableDefault(sort = {"rating"}, direction = Sort.Direction.ASC) Pageable pageable) {
+    public PageDto<GradeDto> getPageGrade(@Valid SearchGradeDto dto,
+                                          @PageableDefault(sort = {"rating"}, direction = Sort.Direction.ASC) Pageable pageable) {
 
         SearchGradeArgument argument = gradeMapper.toSearchArgument(dto);
         Page<Grade> page = gradeService.getPageGrade(argument, pageable);
         Page<GradeDto> grades = page.map(gradeMapper::toDto);
-        return new PageGrade<>(grades.getContent(), page.getTotalElements());
+        return new PageDto<>(grades.getContent(), page.getTotalElements());
     }
 
     @PostMapping("create")

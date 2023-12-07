@@ -10,13 +10,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import thewhite.homework.api.PageDto;
 import thewhite.homework.api.entry.dto.*;
 import thewhite.homework.api.entry.mapper.EntryMapper;
 import thewhite.homework.model.Entry;
 import thewhite.homework.service.entry.EntryService;
 import thewhite.homework.service.entry.argument.SearchEntryArgument;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -48,13 +47,13 @@ public class EntryController {
 
     @GetMapping("page")
     @Operation(description = "Получить список записей с пейджинацией и сортировкой")
-    public PageEntry<EntryListDto> getPageEntry(SearchEntryDto dto,
-                                                @PageableDefault(sort = {"name", "description"}) Pageable pageable) {
+    public PageDto<EntryListDto> getPageEntry(SearchEntryDto dto,
+                                              @PageableDefault(sort = {"name", "description"}) Pageable pageable) {
 
         SearchEntryArgument argument = entryMapper.toSearchArgument(dto);
         Page<Entry> page = entryService.getPageEntry(argument, pageable);
         Page<EntryListDto> entries = page.map(entryMapper::toDtoList);
-        return new PageEntry<>(entries.getContent(), page.getTotalElements());
+        return new PageDto<>(entries.getContent(), page.getTotalElements());
     }
 
     @GetMapping("{id}/get")
