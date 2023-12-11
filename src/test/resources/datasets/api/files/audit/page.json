@@ -1,0 +1,22 @@
+{
+  "security_audit": [
+    {
+      "security_audit_id": 1,
+      "grade_id": "d1b4e136-647c-4136-88e0-f2a8f19dfb2e",
+      "info": "ipAddress= 0:0:0:0:0:0:0:1, userAgent= PostmanRuntime/7.35.0",
+      "created_at": "2022-02-22 12:00:00"
+    },
+    {
+      "security_audit_id": 2,
+      "grade_id": "dbe50c38-66fc-49a0-b99b-b424dde50a6a",
+      "info": "ipAddress= 0:0:0:0:0:0:0:2, userAgent= PostmanRuntime/7.35.0",
+      "created_at": "2022-03-23 13:00:00"
+    },
+    {
+      "security_audit_id": 3,
+      "grade_id": "f759cfaa-e10a-4799-9e06-11fdd479dee1",
+      "info": "ipAddress= 0:0:0:0:0:0:0:3, userAgent= PostmanRuntime/7.35.0",
+      "created_at": "2022-04-24 14:00:00"
+    }
+  ]
+}
