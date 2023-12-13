@@ -40,7 +40,7 @@ public class EntryServiceImpl implements EntryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Entry> getPageEntry(SearchEntryArgument argument, Pageable pageable) {
+    public Page<Entry> page(SearchEntryArgument argument, Pageable pageable) {
         Predicate predicate = buildPredicate(argument);
 
         return repository.findAll(predicate, pageable);

@@ -9,7 +9,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import thewhite.homework.api.grade.dto.GradeDto;
+import thewhite.homework.model.Grade;
 import thewhite.homework.service.securityAudit.SecurityAuditService;
 import thewhite.homework.service.securityAudit.argument.CreateSecurityAuditArgument;
 
@@ -20,31 +20,34 @@ import java.time.LocalDateTime;
 @Component
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class GradeAspect {
+public class SecurityAuditAspect {
 
     SecurityAuditService securityAuditService;
 
     @Pointcut("@annotation(thewhite.homework.aspect.annotation.LogCreateGrade)")
-    public void controllerPointcut() {}
+    private void controllerPointcut() {}
 
-    @AfterReturning(value = "controllerPointcut()", returning = "gradeDto")
-    public void logRequest(GradeDto gradeDto) {
-        CreateSecurityAuditArgument argument = buildRequest(gradeDto);
+    @AfterReturning(value = "controllerPointcut()", returning = "grade")
+    public void logRequest(Grade grade) {
+        CreateSecurityAuditArgument argument = buildRequest(grade);
         securityAuditService.create(argument);
     }
 
-    private CreateSecurityAuditArgument buildRequest(GradeDto dto) {
+    private CreateSecurityAuditArgument buildRequest(Grade grade) {
         return CreateSecurityAuditArgument.builder()
-                                          .gradeId(dto.getId())
+                                          .gradeId(grade.getId())
                                           .createdAt(LocalDateTime.now())
                                           .info(getRequestInfo())
                                           .build();
     }
 
     private String getRequestInfo() {
-        HttpServletRequest request = ((ServletRequestAttributes)
-                RequestContextHolder.currentRequestAttributes()).getRequest();
-
-        return "ipAddress= " + request.getRemoteAddr() + ", " + "userAgent= " + request.getHeader("User-Agent");
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            HttpServletRequest request = attributes.getRequest();
+            return "ipAddress= " + request.getRemoteAddr() + ", " + "userAgent= " + request.getHeader("User-Agent");
+        } else {
+            return "ipAddress= , userAgent= ";
+        }
     }
 }

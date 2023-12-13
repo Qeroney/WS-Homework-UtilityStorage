@@ -26,7 +26,7 @@ public class SecurityAuditServiceImpl implements SecurityAuditService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<SecurityAudit> getAuditPage(SearchSecurityAuditArgument argument, Pageable pageable) {
+    public Page<SecurityAudit> page(SearchSecurityAuditArgument argument, Pageable pageable) {
         Predicate predicate = buildPredicate(argument);
 
         return securityAuditRepository.findAll(predicate, pageable);

@@ -11,7 +11,7 @@ import thewhite.homework.service.entry.argument.UpdateEntryArgument;
 public interface EntryService {
     Entry create(CreateEntryArgument argument);
 
-    Page<Entry> getPageEntry(SearchEntryArgument argument, Pageable pageable);
+    Page<Entry> page(SearchEntryArgument argument, Pageable pageable);
 
     void delete(Long id);
 

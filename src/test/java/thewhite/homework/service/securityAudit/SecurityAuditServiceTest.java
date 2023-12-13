@@ -60,7 +60,7 @@ class SecurityAuditServiceTest {
     }
 
     @Test
-    void getAuditPage() {
+    void page() {
         //Arrange
         SearchSecurityAuditArgument argument = SearchSecurityAuditArgument.builder()
                                                                           .info("ipAddress= 0:0:0:0:0:0:0:3, userAgent= PostmanRuntime/7.35.0")
@@ -70,7 +70,7 @@ class SecurityAuditServiceTest {
         Mockito.when(securityAuditRepository.findAll(any(Predicate.class), eq(pageable))).thenReturn(securityAudits);
 
         //Act
-        Page<SecurityAudit> auditPage = securityAuditService.getAuditPage(argument, pageable);
+        Page<SecurityAudit> auditPage = securityAuditService.page(argument, pageable);
 
         //Assert
         ArgumentCaptor<Predicate> predicateArgumentCaptor = ArgumentCaptor.forClass(Predicate.class);

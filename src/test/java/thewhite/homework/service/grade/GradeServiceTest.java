@@ -76,7 +76,7 @@ class GradeServiceTest {
     }
 
     @Test
-    void getGradePage() {
+    void page() {
         //Arrange
         Long id = 1L;
         SearchGradeArgument argument = SearchGradeArgument.builder()
@@ -89,7 +89,7 @@ class GradeServiceTest {
         Mockito.when(gradeRepository.findAll(any(Predicate.class), eq(pageable))).thenReturn(expectedPage);
 
         //Act
-        Page<Grade> result = gradeService.getPageGrade(argument, pageable);
+        Page<Grade> result = gradeService.page(argument, pageable);
 
         //Assert
         ArgumentCaptor<Predicate> predicateArgumentCaptor = ArgumentCaptor.forClass(Predicate.class);

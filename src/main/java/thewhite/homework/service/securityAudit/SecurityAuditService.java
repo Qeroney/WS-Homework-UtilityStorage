@@ -8,7 +8,7 @@ import thewhite.homework.service.securityAudit.argument.SearchSecurityAuditArgum
 
 public interface SecurityAuditService {
 
-    Page<SecurityAudit> getAuditPage(SearchSecurityAuditArgument argument, Pageable pageable);
+    Page<SecurityAudit> page(SearchSecurityAuditArgument argument, Pageable pageable);
 
     SecurityAudit create(CreateSecurityAuditArgument argument);
 }

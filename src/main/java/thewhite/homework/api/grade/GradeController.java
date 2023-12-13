@@ -46,13 +46,10 @@ public class GradeController {
                                           @PageableDefault(sort = {"rating"}, direction = Sort.Direction.ASC) Pageable pageable) {
 
         SearchGradeArgument argument = gradeMapper.toSearchArgument(dto);
-        Page<Grade> page = gradeService.getPageGrade(argument, pageable);
-        Page<GradeDto> grades = page.map(gradeMapper::toDto);
-        return new PageDto<>(grades.getContent(), page.getTotalElements());
+        return gradeMapper.toSearchResultDto(gradeService.page(argument, pageable));
     }
 
     @PostMapping("create")
-    @LogCreateGrade
     @Operation(description = "Создать оценку")
     public GradeDto create(@RequestBody CreateGradeDto dto) {
         Grade execute = action.execute(gradeMapper.toCreateArgument(dto));
