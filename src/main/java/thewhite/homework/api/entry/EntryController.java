@@ -51,9 +51,7 @@ public class EntryController {
                                               @PageableDefault(sort = {"name", "description"}) Pageable pageable) {
 
         SearchEntryArgument argument = entryMapper.toSearchArgument(dto);
-        Page<Entry> page = entryService.getPageEntry(argument, pageable);
-        Page<EntryListDto> entries = page.map(entryMapper::toDtoList);
-        return new PageDto<>(entries.getContent(), page.getTotalElements());
+        return entryMapper.toSearchResultDto(entryService.page(argument, pageable));
     }
 
     @GetMapping("{id}/get")

@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import thewhite.homework.aspect.annotation.LogCreateGrade;
 import thewhite.homework.model.Grade;
 import thewhite.homework.model.QGrade;
 import thewhite.homework.repository.GradeRepository;
@@ -30,6 +31,7 @@ public class GradeServiceImpl implements GradeService {
 
     @Override
     @Transactional
+    @LogCreateGrade
     public Grade create(@NonNull CreateGradeArgument argument) {
         return gradeRepository.save(Grade.builder()
                                          .rating(argument.getRating())
@@ -46,7 +48,7 @@ public class GradeServiceImpl implements GradeService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Grade> getPageGrade(SearchGradeArgument argument, Pageable pageable) {
+    public Page<Grade> page(SearchGradeArgument argument, Pageable pageable) {
         Predicate predicate = buildPredicate(argument);
 
         return gradeRepository.findAll(predicate, pageable);

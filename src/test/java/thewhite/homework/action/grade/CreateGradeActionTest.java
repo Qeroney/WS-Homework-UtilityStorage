@@ -10,8 +10,6 @@ import thewhite.homework.service.entry.EntryService;
 import thewhite.homework.service.grade.GradeService;
 import thewhite.homework.service.grade.argument.CreateGradeArgument;
 
-import java.util.ArrayList;
-
 import static org.mockito.ArgumentMatchers.any;
 
 class CreateGradeActionTest {
@@ -23,7 +21,7 @@ class CreateGradeActionTest {
     private final CreateGradeAction action = new CreateGradeAction(entryService, gradeService);
 
     @Test
-    void create() {
+    void execute() {
         //Arrange
         Grade expectedGrade = Mockito.mock(Grade.class);
         Entry entry = Mockito.mock(Entry.class);

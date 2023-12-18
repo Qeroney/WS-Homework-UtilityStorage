@@ -18,6 +18,7 @@ import thewhite.homework.api.grade.dto.CreateGradeDto;
 import thewhite.homework.api.grade.dto.GradeDto;
 import thewhite.homework.api.grade.dto.SearchGradeDto;
 import thewhite.homework.api.grade.mapper.GradeMapper;
+import thewhite.homework.aspect.annotation.LogCreateGrade;
 import thewhite.homework.model.Grade;
 import thewhite.homework.service.grade.GradeService;
 import thewhite.homework.service.grade.argument.SearchGradeArgument;
@@ -40,15 +41,12 @@ public class GradeController {
     GradeMapper gradeMapper;
 
     @GetMapping("page")
-    @ApiResponse(description = "Оценка не найдена", responseCode = "404")
     @Operation(description = "Получения списка по идентификатору записи с полезностями")
     public PageDto<GradeDto> getPageGrade(@Valid SearchGradeDto dto,
                                           @PageableDefault(sort = {"rating"}, direction = Sort.Direction.ASC) Pageable pageable) {
 
         SearchGradeArgument argument = gradeMapper.toSearchArgument(dto);
-        Page<Grade> page = gradeService.getPageGrade(argument, pageable);
-        Page<GradeDto> grades = page.map(gradeMapper::toDto);
-        return new PageDto<>(grades.getContent(), page.getTotalElements());
+        return gradeMapper.toSearchResultDto(gradeService.page(argument, pageable));
     }
 
     @PostMapping("create")

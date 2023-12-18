@@ -193,8 +193,7 @@ class EntryControllerIT {
     void getPageEntryWithoutParams() {
         // Act & Arrange
         PageDto<EntryListDto> responseBody = client.get()
-                                                     .uri(uriBuilder -> uriBuilder.path("/entry/page")
-                                                                                  .build())
+                                                     .uri("/entry/page")
                                                      .exchange()
                                                      .expectStatus()
                                                      .isOk()

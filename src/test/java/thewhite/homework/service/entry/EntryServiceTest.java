@@ -149,7 +149,7 @@ class EntryServiceTest {
     }
 
     @Test
-    void getEntryPage() {
+    void page() {
         // Arrange
         SearchEntryArgument argument = SearchEntryArgument.builder()
                                                           .name("name")
@@ -161,7 +161,7 @@ class EntryServiceTest {
         Mockito.when(entryRepository.findAll(any(Predicate.class), eq(pageable))).thenReturn(expectedPage);
 
         // Act
-        Page<Entry> result = entryService.getPageEntry(argument, pageable);
+        Page<Entry> result = entryService.page(argument, pageable);
 
         // Assert
         ArgumentCaptor<Predicate> predicateCaptor = ArgumentCaptor.forClass(Predicate.class);
