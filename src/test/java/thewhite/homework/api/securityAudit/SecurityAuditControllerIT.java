@@ -70,8 +70,7 @@ class SecurityAuditControllerIT {
     void getSecurityAuditPageWithoutParams() {
         //Act & Arrange
         PageDto<SecurityAuditDto> responseBody = client.get()
-                                                       .uri(uriBuilder -> uriBuilder.path("/audit/page")
-                                                                                    .build())
+                                                       .uri("/audit/page")
                                                        .exchange()
                                                        .expectStatus()
                                                        .isOk()
