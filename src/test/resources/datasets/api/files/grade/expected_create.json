@@ -23,5 +23,13 @@
       "comment": "com",
       "rating": 5
     }
+  ],
+  "security_audit": [
+    {
+      "security_audit_id": 1,
+      "grade_id": "regex:.+",
+      "info": "ipAddress= 127.0.0.1, userAgent= ReactorNetty/1.0.21",
+      "created_at": "regex:.+"
+    }
   ]
 }

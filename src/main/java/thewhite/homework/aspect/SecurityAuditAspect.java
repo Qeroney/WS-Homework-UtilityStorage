@@ -29,11 +29,11 @@ public class SecurityAuditAspect {
 
     @AfterReturning(value = "controllerPointcut()", returning = "grade")
     public void logRequest(Grade grade) {
-        CreateSecurityAuditArgument argument = buildRequest(grade);
+        CreateSecurityAuditArgument argument = getArgument(grade);
         securityAuditService.create(argument);
     }
 
-    private CreateSecurityAuditArgument buildRequest(Grade grade) {
+    private CreateSecurityAuditArgument getArgument(Grade grade) {
         return CreateSecurityAuditArgument.builder()
                                           .gradeId(grade.getId())
                                           .createdAt(LocalDateTime.now())

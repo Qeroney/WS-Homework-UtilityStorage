@@ -2,6 +2,7 @@ package thewhite.homework.service.securityAudit;
 
 import lombok.AccessLevel;
 import com.querydsl.core.types.Predicate;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
@@ -34,7 +35,7 @@ public class SecurityAuditServiceImpl implements SecurityAuditService {
 
     @Override
     @Transactional
-    public SecurityAudit create(CreateSecurityAuditArgument argument) {
+    public SecurityAudit create(@NonNull CreateSecurityAuditArgument argument) {
         return securityAuditRepository.save(SecurityAudit.builder()
                                                          .gradeId(argument.getGradeId())
                                                          .info(argument.getInfo())
