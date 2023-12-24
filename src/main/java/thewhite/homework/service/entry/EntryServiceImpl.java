@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import thewhite.homework.aspect.annotation.LogStatistics;
 import thewhite.homework.exception.NotFoundException;
 import thewhite.homework.model.Entry;
 import thewhite.homework.model.QEntry;
@@ -30,6 +31,7 @@ public class EntryServiceImpl implements EntryService {
 
     @Override
     @Transactional
+    @LogStatistics
     public Entry create(@NonNull CreateEntryArgument argument) {
         return repository.save(Entry.builder()
                                     .name(argument.getName())
@@ -48,12 +50,14 @@ public class EntryServiceImpl implements EntryService {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
+    @LogStatistics
     public void delete(@NonNull Long id) {
         repository.deleteById(id);
     }
 
     @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @LogStatistics
     public Entry update(@NonNull Long id, @NonNull UpdateEntryArgument argument) {
         Entry entry = getExisting(id);
 
@@ -70,6 +74,61 @@ public class EntryServiceImpl implements EntryService {
         return repository.findById(id)
                          .orElseThrow(() -> new NotFoundException("Запись не найдена"));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long getTotalEntries() {
+        return repository.count();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long getEntriesWithoutGrades() {
+        return repository.getEntriesWithoutGrades();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long getNoLessThanFourEntries() {
+        return repository.getNoLessThanFourEntries();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long getAboveFourEntries() {
+        return repository.getAboveFourEntries();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long entriesWithAverageGradeEqualsFive() {
+        return repository.entriesWithAverageGradeEqualsFive();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Double percentageEntriesWithAverageGradeEqualsFive() {
+        long totalEntries = repository.count();
+        long entriesWithAverageGradeEqualsFive = repository.entriesWithAverageGradeEqualsFive();
+        return ((double) entriesWithAverageGradeEqualsFive / totalEntries) * 100;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Double percentageAboveFourEntries() {
+        long totalEntries = repository.count();
+        long aboveFourEntries = repository.getAboveFourEntries();
+        return ((double) aboveFourEntries / totalEntries) * 100;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Double percentageNoLessThanFourEntries() {
+        long totalEntries = repository.count();
+        long noLessThanFourEntries = repository.getNoLessThanFourEntries();
+        return ((double) noLessThanFourEntries / totalEntries) * 100;
+    }
+
 
     private Predicate buildPredicate(SearchEntryArgument argument) {
         return QPredicates.builder()

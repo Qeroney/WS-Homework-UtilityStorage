@@ -1,0 +1,17 @@
+{
+  "statistics": [
+    {
+      "id": 1,
+      "total_entries": 5,
+      "total_grades": 5,
+      "no_less_than_four_percentage": 1.1,
+      "no_less_than_four_entries": 5,
+      "max_rating_entries": 5,
+      "max_rating_percentage": 1.1,
+      "average_rating": 5.0,
+      "above_four_entries": 5,
+      "above_four_percentage": 1.1,
+      "entries_without_grades": 5
+    }
+  ]
+}

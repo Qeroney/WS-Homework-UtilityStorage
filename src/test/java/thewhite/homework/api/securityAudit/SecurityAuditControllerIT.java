@@ -30,7 +30,7 @@ class SecurityAuditControllerIT {
 
     @Test
     @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/audit/page.json")
-    void getSecurityAuditPage() {
+    void page() {
         //Arrange
         SearchSecurityAuditDto dto = SearchSecurityAuditDto.builder()
                                                            .info("1")
@@ -67,7 +67,7 @@ class SecurityAuditControllerIT {
 
     @Test
     @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/audit/page.json")
-    void getSecurityAuditPageWithoutParams() {
+    void pageWithoutParams() {
         //Act & Arrange
         PageDto<SecurityAuditDto> responseBody = client.get()
                                                        .uri("/audit/page")

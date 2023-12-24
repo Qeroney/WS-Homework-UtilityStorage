@@ -7,7 +7,6 @@ import thewhite.homework.service.entry.argument.CreateEntryArgument;
 import thewhite.homework.service.entry.argument.SearchEntryArgument;
 import thewhite.homework.service.entry.argument.UpdateEntryArgument;
 
-
 public interface EntryService {
     Entry create(CreateEntryArgument argument);
 
@@ -18,4 +17,20 @@ public interface EntryService {
     Entry update(Long id, UpdateEntryArgument argument);
 
     Entry getExisting(Long id);
+
+    Long getTotalEntries();
+
+    Long getEntriesWithoutGrades();
+
+    Long getNoLessThanFourEntries();
+
+    Long getAboveFourEntries();
+
+    Long entriesWithAverageGradeEqualsFive();
+
+    Double percentageEntriesWithAverageGradeEqualsFive();
+
+    Double percentageAboveFourEntries();
+
+    Double percentageNoLessThanFourEntries();
 }

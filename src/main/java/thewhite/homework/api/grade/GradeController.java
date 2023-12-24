@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -18,7 +17,6 @@ import thewhite.homework.api.grade.dto.CreateGradeDto;
 import thewhite.homework.api.grade.dto.GradeDto;
 import thewhite.homework.api.grade.dto.SearchGradeDto;
 import thewhite.homework.api.grade.mapper.GradeMapper;
-import thewhite.homework.aspect.annotation.LogCreateGrade;
 import thewhite.homework.model.Grade;
 import thewhite.homework.service.grade.GradeService;
 import thewhite.homework.service.grade.argument.SearchGradeArgument;
@@ -42,8 +40,8 @@ public class GradeController {
 
     @GetMapping("page")
     @Operation(description = "Получения списка по идентификатору записи с полезностями")
-    public PageDto<GradeDto> getPageGrade(@Valid SearchGradeDto dto,
-                                          @PageableDefault(sort = {"rating"}, direction = Sort.Direction.ASC) Pageable pageable) {
+    public PageDto<GradeDto> page(@Valid SearchGradeDto dto,
+                                  @PageableDefault(sort = {"rating"}, direction = Sort.Direction.ASC) Pageable pageable) {
 
         SearchGradeArgument argument = gradeMapper.toSearchArgument(dto);
         return gradeMapper.toSearchResultDto(gradeService.page(argument, pageable));

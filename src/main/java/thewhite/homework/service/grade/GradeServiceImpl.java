@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import thewhite.homework.aspect.annotation.LogCreateGrade;
+import thewhite.homework.aspect.annotation.LogStatistics;
 import thewhite.homework.model.Grade;
 import thewhite.homework.model.QGrade;
 import thewhite.homework.repository.GradeRepository;
@@ -32,6 +33,7 @@ public class GradeServiceImpl implements GradeService {
     @Override
     @Transactional
     @LogCreateGrade
+    @LogStatistics
     public Grade create(@NonNull CreateGradeArgument argument) {
         return gradeRepository.save(Grade.builder()
                                          .rating(argument.getRating())
@@ -42,6 +44,7 @@ public class GradeServiceImpl implements GradeService {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
+    @LogStatistics
     public void delete(@NonNull UUID id) {
         gradeRepository.deleteById(id);
     }
@@ -52,6 +55,18 @@ public class GradeServiceImpl implements GradeService {
         Predicate predicate = buildPredicate(argument);
 
         return gradeRepository.findAll(predicate, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long getTotalGrades() {
+        return gradeRepository.count();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Double getAverageRating() {
+        return gradeRepository.getAverageRating();
     }
 
     private Predicate buildPredicate(SearchGradeArgument argument) {

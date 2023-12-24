@@ -151,7 +151,7 @@ class EntryControllerIT {
 
     @Test
     @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/entry/page.json")
-    void getPageEntry() {
+    void page() {
         // Arrange
         SearchEntryDto dto = SearchEntryDto.builder()
                                            .name("Love")
@@ -190,7 +190,7 @@ class EntryControllerIT {
 
     @Test
     @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/entry/page.json")
-    void getPageEntryWithoutParams() {
+    void pageWithoutParams() {
         // Act & Arrange
         PageDto<EntryListDto> responseBody = client.get()
                                                      .uri("/entry/page")
