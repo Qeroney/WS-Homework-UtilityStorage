@@ -22,7 +22,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Statistics update(UpdateStatisticsArgument argument) {
-        Statistics statistics = Optional.ofNullable(statisticsRepository.findFirstByOrderById())
+        Statistics statistics = Optional.ofNullable(statisticsRepository.findFirstBy())
                                         .orElseGet(Statistics::new);
 
         statistics.setTotalEntries(argument.getTotalEntries());
@@ -42,7 +42,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     @Transactional(readOnly = true)
     public Statistics getStatistics() {
-        return Optional.ofNullable(statisticsRepository.findFirstByOrderById())
+        return Optional.ofNullable(statisticsRepository.findFirstBy())
                        .orElseGet(Statistics::new);
     }
 }

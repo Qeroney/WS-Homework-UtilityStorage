@@ -18,19 +18,5 @@ public interface EntryService {
 
     Entry getExisting(Long id);
 
-    Long getTotalEntries();
-
-    Long getEntriesWithoutGrades();
-
-    Long getNoLessThanFourEntries();
-
-    Long getAboveFourEntries();
-
-    Long entriesWithAverageGradeEqualsFive();
-
-    Double percentageEntriesWithAverageGradeEqualsFive();
-
-    Double percentageAboveFourEntries();
-
-    Double percentageNoLessThanFourEntries();
+    EntryStatistics getEntryStatistics();
 }

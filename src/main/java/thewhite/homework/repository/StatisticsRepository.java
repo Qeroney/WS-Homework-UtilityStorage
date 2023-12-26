@@ -7,5 +7,5 @@ import thewhite.homework.model.Statistics;
 @Repository
 public interface StatisticsRepository extends JpaRepository<Statistics, Long> {
 
-    Statistics findFirstByOrderById();
+    Statistics findFirstBy();
 }

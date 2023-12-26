@@ -59,14 +59,13 @@ public class GradeServiceImpl implements GradeService {
 
     @Override
     @Transactional(readOnly = true)
-    public Long getTotalGrades() {
-        return gradeRepository.count();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Double getAverageRating() {
-        return gradeRepository.getAverageRating();
+    public GradeStatistics getGradeStatistics() {
+        Long all = gradeRepository.count();
+        Double averageRating = gradeRepository.getAverageRating();
+        return GradeStatistics.builder()
+                              .totalGrades(all)
+                              .averageRating(averageRating)
+                              .build();
     }
 
     private Predicate buildPredicate(SearchGradeArgument argument) {

@@ -33,7 +33,7 @@ class StatisticsServiceTest {
                                                                     .noLessThanFourEntries(5L)
                                                                     .build();
         Mockito.when(statisticsRepository.save(any())).thenReturn(statistics);
-        Mockito.when(statisticsRepository.findFirstByOrderById()).thenReturn(Statistics.builder()
+        Mockito.when(statisticsRepository.findFirstBy()).thenReturn(Statistics.builder()
                                                                                        .totalEntries(5L)
                                                                                        .totalGrades(5L)
                                                                                        .noLessThanFourPercentage(1.1)

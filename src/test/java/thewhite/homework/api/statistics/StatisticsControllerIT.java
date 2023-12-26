@@ -26,7 +26,7 @@ class StatisticsControllerIT {
     void statistics() {
         //Act & Arrange
         StatisticsDto responseBody = client.get()
-                                           .uri("/stat/info")
+                                           .uri("/statistics/info")
                                            .exchange()
                                            .expectStatus()
                                            .isOk()

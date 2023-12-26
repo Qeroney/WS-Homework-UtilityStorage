@@ -77,56 +77,27 @@ public class EntryServiceImpl implements EntryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Long getTotalEntries() {
-        return repository.count();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Long getEntriesWithoutGrades() {
-        return repository.getEntriesWithoutGrades();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Long getNoLessThanFourEntries() {
-        return repository.getNoLessThanFourEntries();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Long getAboveFourEntries() {
-        return repository.getAboveFourEntries();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Long entriesWithAverageGradeEqualsFive() {
-        return repository.entriesWithAverageGradeEqualsFive();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Double percentageEntriesWithAverageGradeEqualsFive() {
+    public EntryStatistics getEntryStatistics() {
         long totalEntries = repository.count();
-        long entriesWithAverageGradeEqualsFive = repository.entriesWithAverageGradeEqualsFive();
-        return ((double) entriesWithAverageGradeEqualsFive / totalEntries) * 100;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Double percentageAboveFourEntries() {
-        long totalEntries = repository.count();
+        long withoutGrades = repository.getEntriesWithoutGrades();
         long aboveFourEntries = repository.getAboveFourEntries();
-        return ((double) aboveFourEntries / totalEntries) * 100;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Double percentageNoLessThanFourEntries() {
-        long totalEntries = repository.count();
         long noLessThanFourEntries = repository.getNoLessThanFourEntries();
-        return ((double) noLessThanFourEntries / totalEntries) * 100;
+        long entriesWithAverageGradeEqualsFive = repository.entriesWithAverageGradeEqualsFive();
+
+        Double percentageNoLessThanFourEntries = ((double) noLessThanFourEntries / totalEntries) * 100;
+        Double percentageAboveFourEntries = ((double) aboveFourEntries / totalEntries) * 100;
+        Double percentageEntriesWithAverageGradeEqualsFive = ((double) entriesWithAverageGradeEqualsFive / totalEntries) * 100;
+
+        return EntryStatistics.builder()
+                              .entriesWithoutGrades(withoutGrades)
+                              .maxRatingEntries(entriesWithAverageGradeEqualsFive)
+                              .aboveFourEntries(aboveFourEntries)
+                              .noLessThanFourEntries(noLessThanFourEntries)
+                              .totalEntries(totalEntries)
+                              .noLessThanFourPercentage(percentageNoLessThanFourEntries)
+                              .maxRatingPercentage(percentageEntriesWithAverageGradeEqualsFive)
+                              .aboveFourPercentage(percentageAboveFourEntries)
+                              .build();
     }
 
 

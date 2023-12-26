@@ -16,7 +16,5 @@ public interface GradeService {
 
     Page<Grade> page(SearchGradeArgument argument, Pageable pageable);
 
-    Long getTotalGrades();
-
-    Double getAverageRating();
+    GradeStatistics getGradeStatistics();
 }

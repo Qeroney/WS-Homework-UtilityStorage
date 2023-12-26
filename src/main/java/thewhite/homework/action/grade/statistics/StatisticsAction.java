@@ -8,7 +8,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import thewhite.homework.event.StatisticsEvent;
 import thewhite.homework.service.entry.EntryService;
+import thewhite.homework.service.entry.EntryStatistics;
 import thewhite.homework.service.grade.GradeService;
+import thewhite.homework.service.grade.GradeStatistics;
 import thewhite.homework.service.statistics.StatisticsService;
 import thewhite.homework.service.statistics.argument.UpdateStatisticsArgument;
 
@@ -26,17 +28,19 @@ public class StatisticsAction {
     @Async
     @EventListener
     public void statisticsListener(StatisticsEvent event) {
+        EntryStatistics entryStatistics = entryService.getEntryStatistics();
+        GradeStatistics gradeStatistics = gradeService.getGradeStatistics();
         statisticsService.update(UpdateStatisticsArgument.builder()
-                                                         .totalEntries(entryService.getTotalEntries())
-                                                         .totalGrades(gradeService.getTotalGrades())
-                                                         .averageRating(gradeService.getAverageRating())
-                                                         .aboveFourEntries(entryService.getAboveFourEntries())
-                                                         .aboveFourPercentage(entryService.percentageAboveFourEntries())
-                                                         .entriesWithoutGrades(entryService.getEntriesWithoutGrades())
-                                                         .maxRatingEntries(entryService.entriesWithAverageGradeEqualsFive())
-                                                         .maxRatingPercentage(entryService.percentageEntriesWithAverageGradeEqualsFive())
-                                                         .noLessThanFourEntries(entryService.getNoLessThanFourEntries())
-                                                         .noLessThanFourPercentage(entryService.percentageNoLessThanFourEntries())
+                                                         .totalEntries(entryStatistics.getTotalEntries())
+                                                         .totalGrades(gradeStatistics.getTotalGrades())
+                                                         .averageRating(gradeStatistics.getAverageRating())
+                                                         .aboveFourEntries(entryStatistics.getAboveFourEntries())
+                                                         .aboveFourPercentage(entryStatistics.getAboveFourPercentage())
+                                                         .entriesWithoutGrades(entryStatistics.getEntriesWithoutGrades())
+                                                         .maxRatingEntries(entryStatistics.getMaxRatingEntries())
+                                                         .maxRatingPercentage(entryStatistics.getMaxRatingPercentage())
+                                                         .noLessThanFourEntries(entryStatistics.getNoLessThanFourEntries())
+                                                         .noLessThanFourPercentage(entryStatistics.getNoLessThanFourPercentage())
                                                          .build());
     }
 }

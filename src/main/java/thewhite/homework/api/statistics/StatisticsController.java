@@ -15,7 +15,7 @@ import thewhite.homework.service.statistics.StatisticsService;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("stat")
+@RequestMapping("statistics")
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @Tag(name = "Контроллер для работы со статистикой")
 public class StatisticsController {
