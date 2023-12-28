@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -47,8 +46,8 @@ public class EntryController {
 
     @GetMapping("page")
     @Operation(description = "Получить список записей с пейджинацией и сортировкой")
-    public PageDto<EntryListDto> getPageEntry(SearchEntryDto dto,
-                                              @PageableDefault(sort = {"name", "description"}) Pageable pageable) {
+    public PageDto<EntryListDto> page(SearchEntryDto dto,
+                                      @PageableDefault(sort = {"name", "description"}) Pageable pageable) {
 
         SearchEntryArgument argument = entryMapper.toSearchArgument(dto);
         return entryMapper.toSearchResultDto(entryService.page(argument, pageable));

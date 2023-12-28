@@ -84,7 +84,7 @@ class GradeControllerIT {
 
     @Test
     @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/grade/page.json")
-    void getGradePage() {
+    void page() {
         //Arrange
         SearchGradeDto dto = SearchGradeDto.builder()
                                            .rating(5)
@@ -122,7 +122,7 @@ class GradeControllerIT {
 
     @Test
     @DataSet(cleanBefore = true, cleanAfter = true, value = "datasets/api/files/grade/page.json")
-    void getGradePageWithoutParams() {
+    void pageWithoutParams() {
         //Arrange
         long entryId = 1L;
 

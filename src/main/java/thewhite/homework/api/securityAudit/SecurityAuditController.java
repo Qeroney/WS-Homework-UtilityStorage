@@ -29,7 +29,7 @@ public class SecurityAuditController {
 
     @GetMapping("page")
     @Operation(description = "получение постраничного списка с поиском по полю info")
-    public PageDto<SecurityAuditDto> getSecurityAuditPage(SearchSecurityAuditDto dto, Pageable pageable) {
+    public PageDto<SecurityAuditDto> page(SearchSecurityAuditDto dto, Pageable pageable) {
 
         SearchSecurityAuditArgument argument = securityAuditMapper.toSearchArgument(dto);
         return securityAuditMapper.toSearchResultDto(securityAuditService.page(argument, pageable));

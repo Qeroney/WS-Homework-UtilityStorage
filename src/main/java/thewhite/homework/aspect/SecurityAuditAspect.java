@@ -25,9 +25,9 @@ public class SecurityAuditAspect {
     SecurityAuditService securityAuditService;
 
     @Pointcut("@annotation(thewhite.homework.aspect.annotation.LogCreateGrade)")
-    private void controllerPointcut() {}
+    private void servicePointcut() {}
 
-    @AfterReturning(value = "controllerPointcut()", returning = "grade")
+    @AfterReturning(value = "servicePointcut()", returning = "grade")
     public void logRequest(Grade grade) {
         CreateSecurityAuditArgument argument = getArgument(grade);
         securityAuditService.create(argument);

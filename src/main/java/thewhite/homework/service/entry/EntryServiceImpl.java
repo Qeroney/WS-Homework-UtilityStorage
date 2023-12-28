@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import thewhite.homework.aspect.annotation.LogStatistics;
 import thewhite.homework.exception.NotFoundException;
 import thewhite.homework.model.Entry;
 import thewhite.homework.model.QEntry;
@@ -30,6 +31,7 @@ public class EntryServiceImpl implements EntryService {
 
     @Override
     @Transactional
+    @LogStatistics
     public Entry create(@NonNull CreateEntryArgument argument) {
         return repository.save(Entry.builder()
                                     .name(argument.getName())
@@ -48,12 +50,14 @@ public class EntryServiceImpl implements EntryService {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
+    @LogStatistics
     public void delete(@NonNull Long id) {
         repository.deleteById(id);
     }
 
     @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @LogStatistics
     public Entry update(@NonNull Long id, @NonNull UpdateEntryArgument argument) {
         Entry entry = getExisting(id);
 
@@ -70,6 +74,32 @@ public class EntryServiceImpl implements EntryService {
         return repository.findById(id)
                          .orElseThrow(() -> new NotFoundException("Запись не найдена"));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public EntryStatistics getEntryStatistics() {
+        long totalEntries = repository.count();
+        long withoutGrades = repository.getEntriesWithoutGrades();
+        long aboveFourEntries = repository.getAboveFourEntries();
+        long noLessThanFourEntries = repository.getNoLessThanFourEntries();
+        long entriesWithAverageGradeEqualsFive = repository.entriesWithAverageGradeEqualsFive();
+
+        Double percentageNoLessThanFourEntries = ((double) noLessThanFourEntries / totalEntries) * 100;
+        Double percentageAboveFourEntries = ((double) aboveFourEntries / totalEntries) * 100;
+        Double percentageEntriesWithAverageGradeEqualsFive = ((double) entriesWithAverageGradeEqualsFive / totalEntries) * 100;
+
+        return EntryStatistics.builder()
+                              .entriesWithoutGrades(withoutGrades)
+                              .maxRatingEntries(entriesWithAverageGradeEqualsFive)
+                              .aboveFourEntries(aboveFourEntries)
+                              .noLessThanFourEntries(noLessThanFourEntries)
+                              .totalEntries(totalEntries)
+                              .noLessThanFourPercentage(percentageNoLessThanFourEntries)
+                              .maxRatingPercentage(percentageEntriesWithAverageGradeEqualsFive)
+                              .aboveFourPercentage(percentageAboveFourEntries)
+                              .build();
+    }
+
 
     private Predicate buildPredicate(SearchEntryArgument argument) {
         return QPredicates.builder()
